@@ -1,0 +1,85 @@
+# ════════════════════════════════════════════════════════════════════════════
+# TABLA DE DECISIÓN — Reglas de descuento (REQ-DSC-001..004)
+# ════════════════════════════════════════════════════════════════════════════
+#
+# QUÉ ES ESTO:
+#   Las 8 combinaciones posibles de 3 condiciones (2³ = 8):
+#     - ¿Es premium?       (sí / no)
+#     - ¿Pedido >= $1,000? (sí / no)
+#     - ¿Tiene cupón?      (sí / no)
+#
+# POR QUÉ ESTÁ AQUÍ y no en el código Python:
+#   - Un analista funcional puede editar estas reglas SIN saber programar.
+#   - Si el negocio cambia (ej. el tope pasa de 15% a 20%), solo editas
+#     la línea correspondiente en este archivo.
+#   - El test lee este YAML automáticamente — no hay que tocar código.
+#
+# CÓMO LEER CADA REGLA:
+#   id:           identificador único (aparece en pytest y en la matriz)
+#   customer_type: "standard" o "premium"
+#   order_total:   monto del pedido en dólares
+#   has_coupon:    true = tiene cupón, false = no tiene
+#   expected:      descuento esperado en porcentaje
+#
+# REGLA MÁS IMPORTANTE: DT-R8 (la última)
+#   premium(10) + volumen(5) + cupón(5) = 20%, PERO el tope (REQ-DSC-004)
+#   recorta a 15%. Sin construir la tabla completa, nadie habría pensado
+#   en probar este caso — y sería un defecto en producción.
+#
+
+rules:
+  # ── standard, monto bajo ──────────────────────────────────────────────
+  - id: DT-R1
+    customer_type: standard
+    order_total: 500.0       # por debajo del umbral de $1,000
+    has_coupon: false
+    expected: 0.0            # sin premium, sin volumen, sin cupón → 0%
+
+  - id: DT-R2
+    customer_type: standard
+    order_total: 500.0
+    has_coupon: true          # solo cupón → 5%
+    expected: 5.0
+
+  # ── standard, monto alto ──────────────────────────────────────────────
+  - id: DT-R3
+    customer_type: standard
+    order_total: 1500.0      # por encima del umbral de $1,000
+    has_coupon: false
+    expected: 5.0            # solo volumen → 5%
+
+  - id: DT-R4
+    customer_type: standard
+    order_total: 1500.0
+    has_coupon: true          # volumen + cupón → 10%
+    expected: 10.0
+
+  # ── premium, monto bajo ───────────────────────────────────────────────
+  - id: DT-R5
+    customer_type: premium
+    order_total: 500.0
+    has_coupon: false
+    expected: 10.0           # solo premium → 10%
+
+  - id: DT-R6
+    customer_type: premium
+    order_total: 500.0
+    has_coupon: true          # premium + cupón → 15%
+    expected: 15.0
+
+  # ── premium, monto alto ───────────────────────────────────────────────
+  - id: DT-R7
+    customer_type: premium
+    order_total: 1500.0
+    has_coupon: false
+    expected: 15.0           # premium + volumen = 15% (ya toca el tope)
+
+  # ⭐ LA REGLA QUE JUSTIFICA TODA LA TABLA:
+  # Sin construir las 8 filas, nadie probaría premium + volumen + cupón.
+  # La suma daría 20%, pero el tope lo recorta a 15%.
+  # Si este caso no existe, un defecto de tope llegaría a producción.
+  - id: DT-R8
+    customer_type: premium
+    order_total: 1500.0
+    has_coupon: true
+    expected: 15.0           # REQ-DSC-004: tope — 20% recortado a 15%
