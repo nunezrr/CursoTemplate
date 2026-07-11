@@ -1,0 +1,2680 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+
+
+================================================================
+Directory Structure
+================================================================
+.gitignore
+PLAN_MAESTRO.md
+proyecto-integrador/design-lab/data/decision_table.yaml
+proyecto-integrador/design-lab/design_lab/__init__.py
+proyecto-integrador/design-lab/design_lab/discount.py
+proyecto-integrador/design-lab/design_lab/pairwise_matrix.py
+proyecto-integrador/design-lab/pyproject.toml
+proyecto-integrador/design-lab/tests/test_decision_table.py
+proyecto-integrador/design-lab/tests/test_equivalence_boundary.py
+proyecto-integrador/design-lab/tests/test_pairwise.py
+proyecto-integrador/trazabilidad/matriz-trazabilidad.csv
+proyecto-integrador/ui-lab/conftest.py
+proyecto-integrador/ui-lab/data/products.yaml
+proyecto-integrador/ui-lab/data/users.json
+proyecto-integrador/ui-lab/pages/__init__.py
+proyecto-integrador/ui-lab/pages/cart_page.py
+proyecto-integrador/ui-lab/pages/inventory_page.py
+proyecto-integrador/ui-lab/pages/login_page.py
+proyecto-integrador/ui-lab/pyproject.toml
+proyecto-integrador/ui-lab/screenplay/__init__.py
+proyecto-integrador/ui-lab/screenplay/abilities/__init__.py
+proyecto-integrador/ui-lab/screenplay/abilities/browse_web.py
+proyecto-integrador/ui-lab/screenplay/actor.py
+proyecto-integrador/ui-lab/screenplay/tasks/__init__.py
+proyecto-integrador/ui-lab/screenplay/tasks/add_to_cart.py
+proyecto-integrador/ui-lab/screenplay/tasks/login.py
+proyecto-integrador/ui-lab/tests/test_data_driven.py
+proyecto-integrador/ui-lab/tests/test_login_pom.py
+proyecto-integrador/ui-lab/tests/test_login_screenplay.py
+sesiones/sesion-02/PPT_CONTENIDO.md
+sesiones/sesion-02/SESION_02.md
+SETUP_ESTUDIANTES.md
+Taskfile.yml
+
+================================================================
+Files
+================================================================
+
+================
+File: .gitignore
+================
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# pytest
+.pytest_cache/
+
+# uv
+.uv/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Qoder
+.qoder/
+
+# Instructor-only guides (NOT for students)
+sesiones/**/GUIA_*.md
+
+================
+File: PLAN_MAESTRO.md
+================
+# Plan Maestro — Certificación 3: Ingeniería de Automatización: APIs, Performance y Seguridad
+
+> **Duración total:** 29 horas — 9 sesiones de 3h + 1 sesión final de 2h.
+> **Ritmo:** 80% práctica, 20% teoría. Todo el código del curso es claro, mantenible y revisable: nombres explícitos, datos separados de la lógica, versionado en Git y revisión mediante Pull Request.
+> **Para quién es:** es un curso que se explica solo — parte desde cero y no depende de ningún proyecto externo.
+
+---
+
+## 1. Qué vas a aprender
+
+1. Diseñar tests robustos y mantenibles usando patrones como **Page Object Model** y técnicas de diseño basadas en requisitos y cobertura real.
+2. Automatizar **interfaces de programación de aplicaciones** (*Application Programming Interface*, API), pruebas no funcionales y flujos de **integración y entrega continuas** (*Continuous Integration/Continuous Delivery*, CI/CD) con herramientas como Postman, K6, REST-assured, Jenkins y Docker.
+3. Mantener y escalar suites de pruebas: gestión de datos, versionado y eliminación de tests frágiles que se rompen solos.
+
+---
+
+## 2. Stack del curso
+
+| Dominio | Herramientas | Uso en el curso |
+|---|---|---|
+| Diseño de pruebas | Partición de equivalencias (*Equivalence Partitioning*, EP), análisis de valores límite (*Boundary Value Analysis*, BVA), tablas de decisión y pruebas combinatorias | Matriz de trazabilidad + laboratorios ejecutables |
+| Scripts / Patrones | Page Object Model (POM), Screenplay, Don't Repeat Yourself (DRY) · Lenguajes: Java, Python, JavaScript, C# | Laboratorios con Python como lenguaje base; ejemplos comparados en los 4 lenguajes |
+| Datos externos | JSON (*JavaScript Object Notation*), YAML (*YAML Ain't Markup Language*), CSV (*Comma-Separated Values*), bases de datos y mocks | Capa de datos desacoplada de la lógica de pruebas |
+| APIs | Postman (colecciones)/Newman, REST-assured, Karate DSL, Pact | APIs públicas de práctica |
+| CI/CD | GitHub Actions, Jenkins, GitLab CI, Azure Pipelines · Docker (Selenium Grid, Playwright, Cypress) | Flujo automatizado del proyecto integrador con disparadores por push, Pull Request y ejecución nocturna |
+| Performance | K6, JMeter (+ Gatling vía Karate) | Scripts de carga como infraestructura como código |
+| Seguridad | OWASP ZAP (*Open Worldwide Application Security Project Zed Attack Proxy*), Burp Suite | Escaneo automatizado de seguridad base |
+| Accesibilidad | Axe, Lighthouse, WCAG (*Web Content Accessibility Guidelines*) | Auditorías automatizadas de accesibilidad |
+| Compatibilidad | BrowserStack, SauceLabs, CrossBrowserTesting | Matriz de compatibilidad entre navegadores (cuentas gratuitas o demos) |
+| Móvil / Escritorio | Appium, Espresso, XCUITest, FlaUI, Pywinauto | Labs en emulador + estrategia emulador vs dispositivo real |
+| Regresión visual | Applitools, Percy, Chromatic, Recheck | Línea base visual + comparación asistida por IA, diseño responsivo y modo oscuro |
+| Mantenimiento | Healenium, Testim (autorreparación o *auto-healing*) · Stryker JavaScript/TypeScript, PIT Java (pruebas de mutación o *Mutation Testing*) | Reducción de pruebas inestables + calidad del conjunto de pruebas más allá de la cobertura |
+| Tooling base | — | `uv` (Python), `pnpm` (JS), `Taskfile`, `Git`, `Docker` como herramientas de ejecución y estandarización |
+
+**Sobre qué practicamos:** aplicaciones públicas de práctica — **SauceDemo** (https://www.saucedemo.com) para todo lo relacionado con interfaz de usuario, y APIs públicas de entrenamiento para los ejercicios de servicios.
+
+---
+
+## 3. El proyecto integrador — "Puerta de Calidad de Release" (*QA Release Gate*)
+
+Sesión a sesión construimos un **flujo automatizado de control de calidad** sobre aplicaciones públicas. Al terminar el curso, ese flujo corre completo con un solo disparo:
+
+```
+                         ┌────────────────────────────────────────────────┐
+                         │       PUERTA DE CALIDAD DE RELEASE (CI/CD)     │
+  Pull Request ──────►   │                                                │
+  Push         ──────►   │  Etapa 1: Lint + diseño y trazabilidad         │
+  Nocturno     ──────►   │  Etapa 2: Pruebas de API (Postman + Karate)    │
+                         │  Etapa 3: Pruebas de contrato (Pact)           │
+                         │  Etapa 4: Pruebas básicas de UI (POM + Docker) │
+                         │  Etapa 5: Performance (umbrales con K6)        │
+                         │  Etapa 6: Seguridad (escaneo base con ZAP)      │
+                         │  Etapa 7: Accesibilidad + visual               │
+                         │  Etapa 8: Criterios de calidad del conjunto    │
+                         └───────────────┬────────────────────────────────┘
+                                         │
+                                         ▼
+                      Reportes HTML + matriz de trazabilidad
+```
+
+Cada sesión agrega una etapa al flujo. Al terminar la Sesión 10, todo corre en Jenkins **y** en GitHub Actions.
+Los **retos del curso** se integran directamente al proyecto: Reto 1 (Jenkins + Postman + K6) en las Sesiones 5-6; Reto 2 (OWASP ZAP) en la Sesión 7.
+
+---
+
+## 4. Cronograma — las 10 sesiones
+
+| # | Duración | Tema | Entregable del Proyecto Integrador |
+|---|---|---|---|
+| **S1** | 3h | **Diseño técnico de pruebas:** partición de equivalencias, valores límite, tablas de decisión, combinatorias · Mantenibilidad (reusabilidad, desacoplamiento, modulación) · Matriz de trazabilidad | Laboratorio de diseño ejecutable + matriz de trazabilidad inicial Requerimientos↔Casos↔Defectos |
+| **S2** | 3h | **Desarrollo de scripts:** Page Object Model (POM), Screenplay, Don't Repeat Yourself (DRY) · datos/estados de prueba compartidos (*fixtures*), aserciones (*assertions*), manejo de errores, validaciones dinámicas · Datos externos: JSON/YAML/CSV/bases de datos/mocks · Lenguajes: Java, Python, JavaScript, C# | Conjunto base de pruebas de interfaz de usuario con POM + capa de datos externa desacoplada |
+| **S3** | 3h | **APIs y servicios web I:** REST (*Representational State Transfer*) vs SOAP (*Simple Object Access Protocol*) vs GraphQL · Postman (colecciones) + Newman · Validaciones: status, headers, payloads, esquemas JSON/XML (*Extensible Markup Language*) | Colección Postman versionada + Newman en Taskfile (Etapa 2a) |
+| **S4** | 3h | **APIs II:** REST-assured · **Karate DSL** (*Domain-Specific Language*) con Gherkin, paralelo, validaciones JSON/XML y reportes HTML (*HyperText Markup Language*) · **Contratos con Pact** | Suite Karate + contrato Pact consumidor/proveedor (Etapas 2b y 3) |
+| **S5** | 3h | **CI/CD:** GitHub Actions, Jenkins, GitLab CI, Azure Pipelines · disparadores por push, Pull Request y ejecución nocturna · Docker: Selenium Grid, Playwright, Cypress · **Inicio Reto 1** | Jenkinsfile + flujo de GitHub Actions con etapas 1-4 en contenedores |
+| **S6** | 3h | **Performance:** K6 como infraestructura como código (*Infrastructure as Code*, IaC) y JMeter · umbrales (*thresholds*), escenarios de carga · Karate+Gatling · **Cierre Reto 1** (Jenkins + Postman + K6) | Etapa 5 con umbrales de performance como criterio de aprobación — **Reto 1 entregado** |
+| **S7** | 3h | **Seguridad y otras no funcionales:** OWASP ZAP (escaneo base automatizado), Burp Suite · Axe/Lighthouse (WCAG) · Compatibilidad (BrowserStack/SauceLabs) · **Reto 2** | Etapas 6-7: ZAP + Axe en flujo automatizado — **Reto 2 entregado** |
+| **S8** | 3h | **Mantenimiento:** reducción de pruebas inestables, refactorización, anotaciones condicionales, separación lógica/datos, versionado y trazabilidad · **Autorreparación** (*auto-healing*) con Healenium/Testim · **Pruebas de mutación** (*Mutation Testing*) con Stryker JavaScript/TypeScript y PIT Java | Etapa 8: criterio de puntaje de mutación (*mutation score*) + demo de autorreparación |
+| **S9** | 3h | **Móviles y escritorio:** Appium, Espresso, XCUITest, FlaUI, Pywinauto · híbrido vs nativo · emuladores vs dispositivos reales · **Regresión visual:** línea base visual + IA, diseño responsivo, media queries y modo oscuro | Pruebas móviles básicas (*smoke*) con Appium + validación visual en el flujo automatizado |
+| **S10** | 2h | **Cierre:** integración final del flujo automatizado, demo end-to-end, revisión de retos, resolución de dudas y evaluación de conocimientos | **Puerta de Calidad de Release** completa funcionando + retrospectiva |
+
+**Total: 9×3h + 1×2h = 29 horas.**
+
+---
+
+## 5. Cómo está organizada cada sesión de 3h
+
+```
+Bloque A (55 min) → Problema real + conceptos mínimos + demo paso a paso
+   ── descanso 5 min ──
+Bloque B (55 min) → Laboratorio guiado con práctica directa en código
+   ── descanso 5 min ──
+Bloque C (60 min) → Ejercicio individual + Mini reto + errores comunes / código limpio
+```
+
+## 6. Estructura de carpetas del repo
+
+```
+curso-automatizacion-apis-performance-seguridad/
+├── PLAN_MAESTRO.md            ← este documento
+├── SETUP_ESTUDIANTES.md       ← guía de instalación para estudiantes
+├── proyecto-integrador/       ← Puerta de Calidad de Release (crece cada sesión)
+│   ├── trazabilidad/          ← matriz de trazabilidad (S1)
+│   ├── api-tests/             ← Postman/Newman, Karate, Pact (S3-S4)
+│   ├── performance/           ← scripts K6 (S6)
+│   ├── security/              ← config OWASP ZAP (S7)
+│   └── flujos-ci/             ← Jenkinsfile + flujos automatizados (S5+)
+└── retos/                     ← Reto 1 y Reto 2 (enunciado + solución)
+```
+
+## 7. Evaluación y metodología
+
+- Discusión de casos reales en cada sesión — no hay teoría suelta sin contexto.
+- Entrega de los **Retos 1 y 2** como hitos obligatorios del programa.
+- Espacio al final de cada sesión para resolver dudas sobre lo visto.
+
+================
+File: proyecto-integrador/design-lab/data/decision_table.yaml
+================
+# ════════════════════════════════════════════════════════════════════════════
+# TABLA DE DECISIÓN — Reglas de descuento (REQ-DSC-001..004)
+# ════════════════════════════════════════════════════════════════════════════
+#
+# QUÉ ES ESTO:
+#   Las 8 combinaciones posibles de 3 condiciones (2³ = 8):
+#     - ¿Es premium?       (sí / no)
+#     - ¿Pedido >= $1,000? (sí / no)
+#     - ¿Tiene cupón?      (sí / no)
+#
+# POR QUÉ ESTÁ AQUÍ y no en el código Python:
+#   - Un analista funcional puede editar estas reglas SIN saber programar.
+#   - Si el negocio cambia (ej. el tope pasa de 15% a 20%), solo editas
+#     la línea correspondiente en este archivo.
+#   - El test lee este YAML automáticamente — no hay que tocar código.
+#
+# CÓMO LEER CADA REGLA:
+#   id:           identificador único (aparece en pytest y en la matriz)
+#   customer_type: "standard" o "premium"
+#   order_total:   monto del pedido en dólares
+#   has_coupon:    true = tiene cupón, false = no tiene
+#   expected:      descuento esperado en porcentaje
+#
+# REGLA MÁS IMPORTANTE: DT-R8 (la última)
+#   premium(10) + volumen(5) + cupón(5) = 20%, PERO el tope (REQ-DSC-004)
+#   recorta a 15%. Sin construir la tabla completa, nadie habría pensado
+#   en probar este caso — y sería un defecto en producción.
+#
+
+rules:
+  # ── standard, monto bajo ──────────────────────────────────────────────
+  - id: DT-R1
+    customer_type: standard
+    order_total: 500.0       # por debajo del umbral de $1,000
+    has_coupon: false
+    expected: 0.0            # sin premium, sin volumen, sin cupón → 0%
+
+  - id: DT-R2
+    customer_type: standard
+    order_total: 500.0
+    has_coupon: true          # solo cupón → 5%
+    expected: 5.0
+
+  # ── standard, monto alto ──────────────────────────────────────────────
+  - id: DT-R3
+    customer_type: standard
+    order_total: 1500.0      # por encima del umbral de $1,000
+    has_coupon: false
+    expected: 5.0            # solo volumen → 5%
+
+  - id: DT-R4
+    customer_type: standard
+    order_total: 1500.0
+    has_coupon: true          # volumen + cupón → 10%
+    expected: 10.0
+
+  # ── premium, monto bajo ───────────────────────────────────────────────
+  - id: DT-R5
+    customer_type: premium
+    order_total: 500.0
+    has_coupon: false
+    expected: 10.0           # solo premium → 10%
+
+  - id: DT-R6
+    customer_type: premium
+    order_total: 500.0
+    has_coupon: true          # premium + cupón → 15%
+    expected: 15.0
+
+  # ── premium, monto alto ───────────────────────────────────────────────
+  - id: DT-R7
+    customer_type: premium
+    order_total: 1500.0
+    has_coupon: false
+    expected: 15.0           # premium + volumen = 15% (ya toca el tope)
+
+  # ⭐ LA REGLA QUE JUSTIFICA TODA LA TABLA:
+  # Sin construir las 8 filas, nadie probaría premium + volumen + cupón.
+  # La suma daría 20%, pero el tope lo recorta a 15%.
+  # Si este caso no existe, un defecto de tope llegaría a producción.
+  - id: DT-R8
+    customer_type: premium
+    order_total: 1500.0
+    has_coupon: true
+    expected: 15.0           # REQ-DSC-004: tope — 20% recortado a 15%
+
+================
+File: proyecto-integrador/design-lab/design_lab/__init__.py
+================
+"""design_lab — código simple para practicar técnicas de diseño de pruebas."""
+
+================
+File: proyecto-integrador/design-lab/design_lab/discount.py
+================
+"""Regla de negocio de descuento en checkout (REQ-DSC-001..005).
+
+Qué hace este archivo
+---------------------
+Contiene UNA sola función: ``calculate_discount``.
+Recibe tres datos de un pedido (tipo de cliente, monto total y si tiene cupón)
+y devuelve el porcentaje de descuento que aplica.
+
+Por qué lo usamos en el curso
+------------------------------
+- Es código simple: no depende de base de datos, navegador ni API.
+- Tiene reglas claras y combinaciones interesantes (tope, umbrales).
+- Permite practicar las 4 técnicas de diseño sin distracciones:
+  EP, BVA, tablas de decisión y pairwise.
+
+Trazabilidad
+------------
+Cada requerimiento tiene un identificador ``REQ-DSC-XXX``.
+Esos mismos IDs aparecen en:
+  - Los docstrings de esta función.
+  - Los ``id=`` de cada ``pytest.param`` en los tests.
+  - La columna ``req_id`` de ``matriz-trazabilidad.csv``.
+
+Así, si un test falla, puedes rastrear desde el fallo hasta el requerimiento
+en segundos — no en horas buscando en un Excel.
+"""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONSTANTES DE NEGOCIO
+# ─────────────────────────────────────────────────────────────────────────────
+# Las extraemos del código para que sean fáciles de encontrar, cambiar y testear.
+# Si el negocio cambia el umbral de $1,000 a $2,000, solo tocas esta línea.
+
+VALID_CUSTOMER_TYPES = frozenset({"standard", "premium"})
+# ↑ Los únicos tipos de cliente permitidos.
+#   Usamos frozenset (inmutable) porque no cambia en runtime.
+#   Si alguien pasa "vip" o "gold", la función lanza ValueError.
+
+MIN_ORDER_EXCLUSIVE = 0.0
+# ↑ El pedido mínimo es MAYOR que cero (exclusivo).
+#   Es decir, $0.00 NO es válido — debe ser al menos $0.01.
+
+MAX_ORDER_INCLUSIVE = 10_000.0
+# ↑ El pedido máximo es $10,000.00 (inclusivo).
+#   Es decir, $10,000.00 SÍ es válido; $10,000.01 NO.
+
+VOLUME_THRESHOLD = 1_000.0
+# ↑ Umbral de bono por volumen (REQ-DSC-002).
+#   Si el pedido es >= $1,000.00, se suma +5% al descuento.
+#   Ojo: el ``>=`` importa — $999.99 NO recibe bono, $1,000.00 SÍ.
+
+DISCOUNT_CAP = 15.0
+# ↑ Tope máximo de descuento (REQ-DSC-004).
+#   Sin importar cuántas reglas sumen, el resultado nunca pasa de 15%.
+#   Ejemplo: premium(10) + volumen(5) + cupón(5) = 20% → se recorta a 15%.
+
+
+def calculate_discount(customer_type: str, order_total: float, has_coupon: bool) -> float:
+    """Calcula el porcentaje de descuento aplicable a un pedido.
+
+    Parámetros
+    ----------
+    customer_type : str
+        Tipo de cliente: ``"standard"`` o ``"premium"``.
+    order_total : float
+        Monto total del pedido en dólares.
+    has_coupon : bool
+        ``True`` si el cliente tiene cupón de descuento.
+
+    Devuelve
+    --------
+    float
+        Porcentaje de descuento (ej. 10.0 = diez por ciento).
+
+    Lanza
+    -----
+    ValueError
+        Si ``customer_type`` no es válido o ``order_total`` está fuera de rango.
+
+    Reglas de negocio (cada una es un requerimiento trazable)
+    ---------------------------------------------------------
+    REQ-DSC-001: premium → +10% base; standard → +0% base.
+    REQ-DSC-002: order_total >= 1000 → +5% bono por volumen.
+    REQ-DSC-003: has_coupon == True → +5% por cupón.
+    REQ-DSC-004: el descuento total NUNCA excede 15% (tope).
+    REQ-DSC-005: order_total debe estar en (0; 10000]; si no, ValueError.
+    """
+    # ── PASO 1: Validar tipo de cliente ──────────────────────────────────
+    # Si el tipo no está en {standard, premium}, rechazamos inmediatamente.
+    # Esto es una partición inválida (EP): probar con "vip", "gold", "".
+    if customer_type not in VALID_CUSTOMER_TYPES:
+        raise ValueError(f"customer_type inválido: {customer_type!r}")
+
+    # ── PASO 2: Validar rango del pedido ─────────────────────────────────
+    # El rango válido es (0; 10000] — exclusivo en cero, inclusivo en 10k.
+    # Valores límite (BVA): 0.01 (primer válido), 10000.00 (último válido).
+    if not MIN_ORDER_EXCLUSIVE < order_total <= MAX_ORDER_INCLUSIVE:
+        raise ValueError(f"order_total fuera de rango (0; 10000]: {order_total}")
+
+    # ── PASO 3: Calcular descuento base según tipo de cliente ────────────
+    # REQ-DSC-001: premium obtiene 10% base, standard obtiene 0%.
+    discount = 10.0 if customer_type == "premium" else 0.0
+
+    # ── PASO 4: Bono por volumen ─────────────────────────────────────────
+    # REQ-DSC-002: si el pedido alcanza el umbral de $1,000, suma +5%.
+    if order_total >= VOLUME_THRESHOLD:
+        discount += 5.0
+
+    # ── PASO 5: Bono por cupón ───────────────────────────────────────────
+    # REQ-DSC-003: si tiene cupón, suma +5% adicional.
+    if has_coupon:
+        discount += 5.0
+
+    # ── PASO 6: Aplicar tope ─────────────────────────────────────────────
+    # REQ-DSC-004: el descuento nunca puede ser mayor a 15%.
+    # Sin este tope, premium + volumen + cupón daría 20%.
+    return min(discount, DISCOUNT_CAP)
+
+================
+File: proyecto-integrador/design-lab/design_lab/pairwise_matrix.py
+================
+"""Matriz pairwise con análisis de huecos (gap analysis) — REQ-MTX-001.
+
+Qué hace este archivo
+---------------------
+Implementa un patrón de 3 pasos para generar matrices de prueba combinatoria:
+
+    PASO 1 — GENERAR:   Usar ``allpairspy`` para crear la matriz inicial.
+    PASO 2 — AUDITAR:   Revisar si quedaron pares de valores sin cubrir.
+    PASO 3 — COMPLEMENTAR: Agregar filas extra para cubrir los pares faltantes.
+
+Por qué no basta con allpairspy solo
+-------------------------------------
+``allpairspy`` usa un algoritmo *greedy* (voraz) con ``filter_func``.
+Cuando hay restricciones (ej. "webkit solo corre en macOS"), el algoritmo
+puede SACRIFICAR pares válidos para cumplir la restricción.
+
+Ejemplo real que ocurrió en este laboratorio:
+  - Restricción: webkit solo en macOS.
+  - allpairspy generó 10 filas y cumplió la restricción.
+  - PERO dejó sin cubrir los pares (chromium, macos) y (firefox, macos).
+  - Esos pares SON posibles (chromium sí corre en macOS), simplemente
+    el algoritmo los descartó porque macOS ya aparecía con webkit.
+
+Solución
+--------
+Después de generar, auditamos qué pares son *exigibles* (es decir, que
+existe al menos una combinación completa válida que los contiene) y
+complementamos las filas que faltan.
+
+Un par (vi, vj) es exigible si existe al menos una fila completa válida
+que lo contenga. Los pares imposibles por restricción NO se exigen.
+Ejemplo: (webkit, ubuntu) NO es exigible porque webkit solo corre en macOS.
+"""
+
+from itertools import combinations, product
+from typing import Callable
+
+from allpairspy import AllPairs
+
+# Alias de tipos para legibilidad
+Row = list                        # Una fila de la matriz = una combinación de valores
+Validator = Callable[[Row], bool] # Función que dice si una combinación es válida
+
+
+def generate_pairwise_matrix(parameters: list[list], is_valid: Validator) -> list[Row]:
+    """Genera la matriz pairwise y la complementa hasta cubrir todos los pares exigibles.
+
+    Cómo usarla
+    -----------
+    >>> parameters = [["chromium", "firefox", "webkit"], ["ubuntu", "windows", "macos"]]
+    >>> def is_valid(row): return True  # sin restricciones
+    >>> matrix = generate_pairwise_matrix(parameters, is_valid)
+
+    Qué devuelve
+    ------------
+    Una lista de filas. Cada fila es una combinación de valores que:
+    1. Cumple la restricción ``is_valid``.
+    2. Cubre todos los pares exigibles de parámetros.
+    """
+    # PASO 1: generar matriz inicial con allpairspy
+    matrix = [list(row) for row in AllPairs(parameters, filter_func=is_valid)]
+
+    # PASO 2 y 3: auditar pares faltantes y complementarlos
+    for i, vi, j, vj in missing_pairs(parameters, is_valid, matrix):
+        # Verificar si un complemento previo ya cubrió este par
+        if (vi, vj) in {(r[i], r[j]) for r in matrix}:
+            continue
+        # Buscar una fila completa válida que contenga el par (vi, vj)
+        row = _row_containing_pair(parameters, is_valid, i, vi, j, vj)
+        if row is not None:
+            matrix.append(row)
+
+    return matrix
+
+
+def missing_pairs(
+    parameters: list[list], is_valid: Validator, matrix: list[Row]
+) -> list[tuple[int, object, int, object]]:
+    """Encuentra los pares exigibles que la matriz actual NO cubre.
+
+    Qué devuelve
+    ------------
+    Lista de tuplas ``(i, vi, j, vj)`` donde:
+    - ``i`` = índice del primer parámetro (ej. 0 = navegador)
+    - ``vi`` = valor del primer parámetro (ej. "chromium")
+    - ``j`` = índice del segundo parámetro (ej. 1 = sistema operativo)
+    - ``vj`` = valor del segundo parámetro (ej. "macos")
+
+    Cómo funciona
+    -------------
+    1. Para cada par de parámetros (i, j):
+    2.   Recolecta los pares ya cubiertos en la matriz.
+    3.   Para cada combinación (vi, vj) posible:
+    4.     Si no está cubierta Y existe una fila válida que la contiene:
+    5.       → Es un par faltante (exigible pero no cubierto).
+    """
+    missing = []
+    # Iterar sobre todos los pares de parámetros (navegador×SO, navegador×idioma, etc.)
+    for i, j in combinations(range(len(parameters)), 2):
+        # Pares que ya aparecen juntos en alguna fila de la matriz
+        seen = {(row[i], row[j]) for row in matrix}
+        # Revisar TODAS las combinaciones posibles de valores entre parámetro i y j
+        for vi, vj in product(parameters[i], parameters[j]):
+            if (vi, vj) in seen:
+                continue  # ya está cubierto, no es faltante
+            # Solo reportar si es exigible (existe fila válida que lo contiene)
+            if _row_containing_pair(parameters, is_valid, i, vi, j, vj) is not None:
+                missing.append((i, vi, j, vj))
+    return missing
+
+
+def _row_containing_pair(
+    parameters: list[list], is_valid: Validator, i: int, vi: object, j: int, vj: object
+) -> Row | None:
+    """Busca la primera fila completa válida que contiene el par (vi, vj).
+
+    Esta es una búsqueda exhaustiva (prueba todas las combinaciones).
+    Es costosa para muchos parámetros, pero nuestro dataset es pequeño y
+    solo corre una vez al generar la matriz.
+
+    Devuelve ``None`` si es imposible (ej. el par viola la restricción).
+    """
+    for combo in product(*parameters):
+        row = list(combo)
+        # Verificar que la fila tiene los valores buscados Y cumple la restricción
+        if row[i] == vi and row[j] == vj and is_valid(row):
+            return row
+    return None
+
+================
+File: proyecto-integrador/design-lab/pyproject.toml
+================
+[project]
+name = "design-lab"
+version = "0.1.0"
+description = "Sesión 1 — laboratorio de técnicas de diseño de pruebas: EP, BVA, tabla de decisión y pairwise"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "allpairspy>=2.5",
+    "pyyaml>=6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+================
+File: proyecto-integrador/design-lab/tests/test_decision_table.py
+================
+"""Tests basados en tabla de decisión — cargada desde YAML externo.
+
+Qué hace este archivo
+---------------------
+Prueba ``calculate_discount`` con TODAS las combinaciones posibles de
+sus 3 condiciones booleanas:
+  - ¿Es premium?         (sí / no)
+  - ¿Pedido >= $1,000?   (sí / no)
+  - ¿Tiene cupón?        (sí / no)
+
+2 condiciones × 3 estados = ... no, son 3 condiciones × 2 estados = 2³ = **8 reglas**.
+
+Por qué los datos están en YAML y no aquí
+-----------------------------------------
+Esto demuestra **desacoplamiento** (mantenibilidad):
+  - Los datos viven en ``data/decision_table.yaml``.
+  - Este archivo solo contiene lógica de prueba.
+  - Un analista funcional puede editar las reglas SIN saber Python.
+  - Si el negocio cambia una regla, cambias el YAML — no el código.
+
+Cómo funciona
+-------------
+1. ``load_rules()`` lee el YAML y convierte cada fila en un ``pytest.param``.
+2. ``test_decision_table`` ejecuta la función con cada regla y valida el resultado.
+3. ``test_decision_table_is_complete`` cuenta las combinaciones y falla si
+   hay menos de 8 — así nadie puede borrar una regla por accidente.
+"""
+
+from pathlib import Path
+
+import pytest
+import yaml
+
+from design_lab.discount import calculate_discount
+
+# Ruta al archivo de datos — relativo a la ubicación de este test
+TABLE_PATH = Path(__file__).parent.parent / "data" / "decision_table.yaml"
+
+
+def load_rules() -> list[pytest.param]:
+    """Lee el YAML y convierte cada regla en un pytest.param.
+
+    Por qué hacemos esto:
+    - ``pytest.param`` le asigna un ``id`` legible a cada caso.
+    - En la salida de pytest verás ``TC-DT-R1``, ``TC-DT-R2``, etc.
+    - Esos mismos IDs están en la matriz de trazabilidad.
+    """
+    rules = yaml.safe_load(TABLE_PATH.read_text(encoding="utf-8"))["rules"]
+    return [
+        pytest.param(
+            r["customer_type"], r["order_total"], r["has_coupon"], r["expected"],
+            id=f"TC-{r['id']}"  # El ID en pytest = "TC-" + el ID del YAML
+        )
+        for r in rules
+    ]
+
+
+# Este test se ejecuta 8 veces (una por cada regla DT-R1..DT-R8).
+# Si alguna regla tiene el valor esperado incorrecto, pytest te dice cuál.
+@pytest.mark.parametrize(("customer_type", "order_total", "has_coupon", "expected"), load_rules())
+def test_decision_table(customer_type: str, order_total: float, has_coupon: bool, expected: float) -> None:
+    """Verifica que cada regla de la tabla de decisión produce el descuento correcto."""
+    assert calculate_discount(customer_type, order_total, has_coupon) == expected
+
+
+def test_decision_table_is_complete() -> None:
+    """Guardrail: la tabla DEBE cubrir las 8 combinaciones (2³).
+
+    Por qué este test es importante:
+    - Si alguien borra una regla del YAML (ej. DT-R8), este test falla.
+    - La regla DT-R8 es la más valiosa: premium + volumen + cupón = 20%,
+      pero el tope de 15% la recorta. Sin la tabla completa, ese caso
+      nunca se habría probado.
+    - Este test protege el DISEÑO, no solo el código.
+    """
+    rules = yaml.safe_load(TABLE_PATH.read_text(encoding="utf-8"))["rules"]
+    # Extraer las 3 condiciones de cada regla y convertirlas en tupla
+    combos = {(r["customer_type"], r["order_total"] >= 1000, r["has_coupon"]) for r in rules}
+    assert len(combos) == 8, f"Faltan reglas: hay {len(combos)} de 8 combinaciones esperadas"
+
+================
+File: proyecto-integrador/design-lab/tests/test_equivalence_boundary.py
+================
+"""Tests de Partición de Equivalencias (EP) y Análisis de Valores Límite (BVA).
+
+Qué hace este archivo
+---------------------
+Prueba la función ``calculate_discount`` usando dos técnicas:
+
+1. **EP (Partición de Equivalencias):** agrupamos los valores en "clases"
+   que producen el mismo resultado. Probamos UN valor por clase.
+   Ejemplo: si todos los pedidos entre $1 y $999 dan 0% de descuento
+   para clientes standard, basta con probar UN valor en ese rango.
+
+2. **BVA (Análisis de Valores Límite):** los errores viven en las fronteras.
+   Probamos el valor exacto del límite y sus vecinos inmediatos.
+   Ejemplo: si el bono por volumen aplica a partir de $1,000,
+   probamos $999.99 (sin bono) y $1,000.00 (con bono).
+
+Cómo leer este archivo
+----------------------
+Hay 3 bloques de tests, cada uno con una lista de datos parametrizada:
+  - VALID_PARTITIONS:   particiones válidas (el "camino feliz")
+  - BOUNDARIES:         valores límite (las fronteras)
+  - INVALID_PARTITIONS: particiones inválidas (lo que debe fallar)
+
+Cada ``id=`` de ``pytest.param`` coincide con el ``tc_id`` de la
+matriz de trazabilidad (``matriz-trazabilidad.csv``).
+"""
+
+import pytest
+
+from design_lab.discount import calculate_discount
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BLOQUE 1 — PARTICIONES VÁLIDAS (EP)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Cada fila es UNA partición distinta. Probamos un valor representativo.
+#
+# Formato de cada pytest.param:
+#   (tipo_cliente, monto_pedido, tiene_cupon, descuento_esperado)
+#
+# ¿Cómo saber qué particiones usar?
+#   → Miramos los requerimientos REQ-DSC-001..003 y separamos los casos
+#     que producen resultados DIFERENTES en particiones separadas.
+
+VALID_PARTITIONS = [
+    # standard, monto bajo, sin cupón → 0% descuento (caso base)
+    pytest.param("standard", 500.0, False, 0.0, id="TC-DSC-EP-001-standard-base"),
+    # premium, monto bajo, sin cupón → 10% descuento (REQ-DSC-001)
+    pytest.param("premium",  500.0, False, 10.0, id="TC-DSC-EP-002-premium-base"),
+    # standard, monto bajo, CON cupón → 5% descuento (REQ-DSC-003)
+    pytest.param("standard", 500.0, True, 5.0, id="TC-DSC-EP-003-standard-cupon"),
+    # premium, monto alto, sin cupón → 15% descuento (REQ-DSC-001 + REQ-DSC-002, tope)
+    pytest.param("premium", 2000.0, False, 15.0, id="TC-DSC-EP-004-premium-volumen"),
+]
+
+
+# Esta función se ejecuta una vez por cada fila de VALID_PARTITIONS.
+# El ``id=`` es lo que ves en la salida de pytest y en la matriz de trazabilidad.
+@pytest.mark.parametrize(("customer_type", "order_total", "has_coupon", "expected"), VALID_PARTITIONS)
+def test_valid_partitions(customer_type: str, order_total: float, has_coupon: bool, expected: float) -> None:
+    """Verifica que cada partición válida devuelve el descuento correcto."""
+    assert calculate_discount(customer_type, order_total, has_coupon) == expected
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BLOQUE 2 — VALORES LÍMITE (BVA)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Aquí probamos las FRONTERAS del rango y del umbral.
+#
+# Rango del pedido: (0; 10000]   → límites: 0.01, 10000.00
+# Umbral de volumen: 1000        → límites: 999.99, 1000.00
+#
+# ¿Por qué usamos "standard" y sin cupón?
+#   → Para AISLAR el efecto del monto. Si usáramos premium,
+#     no sabríamos si el resultado es por el monto o por el tipo.
+
+BOUNDARIES = [
+    # 0.01 = el primer valor válido (frontera inferior del rango)
+    pytest.param(   0.01, 0.0, id="TC-DSC-BVA-001-minimo-valido"),
+    # 999.99 = justo por debajo del umbral de volumen → sin bono
+    pytest.param( 999.99, 0.0, id="TC-DSC-BVA-003-justo-bajo-umbral-volumen"),
+    # 1000.00 = exactamente en el umbral → con bono de 5% (REQ-DSC-002)
+    pytest.param(1000.00, 5.0, id="TC-DSC-BVA-004-umbral-volumen-exacto"),
+    # 10000.00 = el último valor válido (frontera superior del rango)
+    pytest.param(10_000.00, 5.0, id="TC-DSC-BVA-005-maximo-valido"),
+]
+
+
+@pytest.mark.parametrize(("order_total", "expected"), BOUNDARIES)
+def test_boundary_values(order_total: float, expected: float) -> None:
+    """Verifica los valores límite del rango y del umbral de volumen."""
+    assert calculate_discount("standard", order_total, has_coupon=False) == expected
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# BLOQUE 3 — PARTICIONES INVÁLIDAS
+# ═══════════════════════════════════════════════════════════════════════════════
+# Estos valores NO deberían ser aceptados por la función.
+# En lugar de devolver un descuento, deben lanzar ValueError.
+#
+# IMPORTANTE: ``pytest.raises(ValueError)`` no es manejo de errores.
+# Es un REQUERIMIENTO EJECUTABLE (REQ-DSC-005).
+# Si el código NO lanza la excepción, el test FALLA.
+#
+# Error común de principiantes: olvidar probar las particiones inválidas.
+# Los defectos más caros viven en las entradas que "nunca deberían pasar".
+
+INVALID_PARTITIONS = [
+    # total = 0 → fuera de rango (debe ser > 0)
+    pytest.param("standard", 0.0, id="TC-DSC-INV-001-total-cero"),
+    # total = 10000.01 → fuera de rango (debe ser <= 10000)
+    pytest.param("standard", 10_000.01, id="TC-DSC-INV-002-sobre-maximo"),
+    # tipo de cliente = "vip" → no existe (solo standard o premium)
+    pytest.param("vip", 500.0, id="TC-DSC-INV-003-tipo-cliente-desconocido"),
+    # total negativo → fuera de rango
+    pytest.param("standard", -50.0, id="TC-DSC-INV-004-total-negativo"),
+]
+
+
+@pytest.mark.parametrize(("customer_type", "order_total"), INVALID_PARTITIONS)
+def test_invalid_partitions_raise(customer_type: str, order_total: float) -> None:
+    """Verifica que las entradas inválidas lanzan ValueError (REQ-DSC-005)."""
+    with pytest.raises(ValueError):
+        calculate_discount(customer_type, order_total, has_coupon=False)
+
+================
+File: proyecto-integrador/design-lab/tests/test_pairwise.py
+================
+"""Tests combinatorios — reducción pairwise de la matriz cross-browser.
+
+Qué hace este archivo
+---------------------
+Demuestra el problema real de probar combinaciones de parámetros:
+
+    3 navegadores × 3 sistemas × 2 idiomas × 3 roles = **54 combinaciones**
+
+Ejecutar 54 tests para cada release es costoso. Pairwise reduce a ~10 filas
+garantizando que cada PAR de valores aparece al menos una vez junto.
+
+La lección más importante
+-------------------------
+``allpairspy`` con restricciones NO garantiza cubrir todos los pares.
+Su algoritmo greedy puede sacrificar pares válidos.
+
+Ejemplo real de este laboratorio:
+  - Restricción: webkit (motor de Safari) solo corre en macOS.
+  - allpairspy generó 10 filas válidas.
+  - PERO dejó fuera (chromium, macos) y (firefox, macos).
+  - Esos pares SON posibles — chromium y firefox sí corren en macOS.
+  - El algoritmo los descartó porque macOS ya aparecía con webkit.
+
+Solución: el módulo ``pairwise_matrix.py`` implementa:
+  1. Generar con allpairspy.
+  2. Auditar qué pares quedaron sin cubrir.
+  3. Agregar filas extra para cubrir los faltantes.
+
+Moraleja: **nunca asumas la garantía de una herramienta — demuéstrala con un test.**
+"""
+
+from design_lab.pairwise_matrix import generate_pairwise_matrix, missing_pairs
+
+# ── Parámetros del escenario ────────────────────────────────────────────────
+# Cada lista es un "parámetro" con sus posibles valores.
+# El producto cartesiano de todos = 54 combinaciones.
+
+BROWSERS = ["chromium", "firefox", "webkit"]       # Motor del navegador
+OPERATING_SYSTEMS = ["ubuntu", "windows", "macos"] # Sistema operativo
+LANGUAGES = ["es", "en"]                            # Idioma de la app
+ROLES = ["standard", "premium", "admin"]            # Rol del usuario
+
+PARAMETERS = [BROWSERS, OPERATING_SYSTEMS, LANGUAGES, ROLES]
+FULL_CARTESIAN = 3 * 3 * 2 * 3  # 54 combinaciones totales
+
+
+# ── Restricción de negocio ──────────────────────────────────────────────────
+def is_valid_combination(row: list) -> bool:
+    """webkit (motor de Safari) solo corre en macOS.
+
+    Esta función se pasa a allpairspy como ``filter_func``.
+    Si devuelve False, esa combinación se descarta.
+    """
+    if len(row) >= 2 and row[0] == "webkit" and row[1] != "macos":
+        return False  # webkit en ubuntu o windows → imposible
+    return True
+
+
+# ── Tests ───────────────────────────────────────────────────────────────────
+
+def test_pairwise_reduces_cartesian_product() -> None:
+    """Verifica que pairwise genera MENOS filas que el producto cartesiano.
+
+    Este test confirma la promesa básica: menos tests, misma cobertura de pares.
+    Si la matriz tuviera 54 filas, pairwise no estaría haciendo su trabajo.
+    """
+    matrix = generate_pairwise_matrix(PARAMETERS, is_valid_combination)
+    assert 0 < len(matrix) < FULL_CARTESIAN
+
+
+def test_pairwise_respects_constraints() -> None:
+    """Verifica que NINGUNA fila viola la restricción de webkit.
+
+    Si allpairspy o nuestro complemento genera una fila con
+    (webkit, ubuntu) o (webkit, windows), este test falla.
+    """
+    for row in generate_pairwise_matrix(PARAMETERS, is_valid_combination):
+        assert is_valid_combination(row), f"Combinación inválida generada: {row}"
+
+
+def test_pairwise_covers_every_achievable_pair() -> None:
+    """Gap analysis: tras complementar, ningún par exigible queda sin cubrir.
+
+    Este es el test MÁS importante del archivo. Sin él, no sabríamos
+    si allpairspy dejó huecos. La función ``missing_pairs`` audita
+    y este test falla si encuentra pares sin cubrir.
+    """
+    matrix = generate_pairwise_matrix(PARAMETERS, is_valid_combination)
+    gaps = missing_pairs(PARAMETERS, is_valid_combination, matrix)
+    assert gaps == [], f"Pares sin cubrir: {gaps}"
+
+
+def test_impossible_pairs_are_not_required() -> None:
+    """Confirma que los pares imposibles NO aparecen en la matriz.
+
+    (webkit, ubuntu) y (webkit, windows) son imposibles por la restricción.
+    No los exigimos ni los esperamos — este test verifica que no aparezcan.
+    """
+    matrix = generate_pairwise_matrix(PARAMETERS, is_valid_combination)
+    seen = {(row[0], row[1]) for row in matrix}
+    assert ("webkit", "ubuntu") not in seen
+    assert ("webkit", "windows") not in seen
+
+================
+File: proyecto-integrador/trazabilidad/matriz-trazabilidad.csv
+================
+req_id,requerimiento,tc_id,caso_de_prueba,tecnica,archivo_prueba,estado,def_id
+REQ-DSC-001,Cliente premium recibe 10% base y standard 0%,TC-DSC-EP-001,Partición válida: standard sin cupón bajo umbral → 0%,Partición de equivalencias,tests/test_equivalence_boundary.py,PASS,
+REQ-DSC-001,Cliente premium recibe 10% base y standard 0%,TC-DSC-EP-002,Partición válida: premium sin cupón bajo umbral → 10%,Partición de equivalencias,tests/test_equivalence_boundary.py,PASS,
+REQ-DSC-002,Pedido >= 1000 suma 5% por volumen,TC-DSC-BVA-003,Límite inferior del umbral: 999.99 → sin bono de volumen,Análisis de valores límite,tests/test_equivalence_boundary.py,PASS,
+REQ-DSC-002,Pedido >= 1000 suma 5% por volumen,TC-DSC-BVA-004,Límite exacto del umbral: 1000.00 → con bono de volumen,Análisis de valores límite,tests/test_equivalence_boundary.py,PASS,
+REQ-DSC-003,Cupón válido suma 5% adicional,TC-DT-R2,Regla DT-R2: standard + cupón → 5%,Tabla de decisión,tests/test_decision_table.py,PASS,
+REQ-DSC-004,El descuento total nunca excede 15%,TC-DT-R8,Regla DT-R8: premium + volumen + cupón → tope 15%,Tabla de decisión,tests/test_decision_table.py,PASS,
+REQ-DSC-005,order_total debe estar en (0; 10000],TC-DSC-INV-001,Partición inválida: order_total = 0 → ValueError,Partición de equivalencias + BVA,tests/test_equivalence_boundary.py,PASS,
+REQ-DSC-005,order_total debe estar en (0; 10000],TC-DSC-INV-002,Partición inválida: order_total = 10000.01 → ValueError,Análisis de valores límite,tests/test_equivalence_boundary.py,PASS,
+REQ-DSC-005,order_total debe estar en (0; 10000],TC-DSC-INV-003,Partición inválida: customer_type desconocido → ValueError,Partición de equivalencias,tests/test_equivalence_boundary.py,PASS,
+REQ-MTX-001,La matriz cross-browser cubre todos los pares exigibles de parámetros,TC-PW-001,Pairwise reduce el producto cartesiano respetando restricciones,Pruebas combinatorias (pairwise),tests/test_pairwise.py,PASS,
+REQ-MTX-001,La matriz cross-browser cubre todos los pares exigibles de parámetros,TC-PW-002,Gap analysis: ningún par exigible queda sin cubrir tras complementar,Pruebas combinatorias (pairwise),tests/test_pairwise.py,PASS,DEF-001
+DEF-001,allpairspy con filter_func sacrifica pares válidos (chromium/firefox × macos) — mitigado con pairwise_matrix.py,,,,design_lab/pairwise_matrix.py,CERRADO,
+REQ-LOG-001,POR COMPLETAR (Ejercicio individual S1 — login de SauceDemo),,,,,PENDIENTE,
+REQ-LOG-002,POR COMPLETAR (Ejercicio individual S1 — login de SauceDemo),,,,,PENDIENTE,
+REQ-LOG-003,POR COMPLETAR (Ejercicio individual S1 — login de SauceDemo),,,,,PENDIENTE,
+
+================
+File: proyecto-integrador/ui-lab/conftest.py
+================
+"""conftest.py — Fixtures compartidas del laboratorio de UI.
+
+Este archivo lo lee pytest automáticamente al arrancar.
+Todo lo que defines aquí está disponible en TODOS los tests sin importar nada.
+
+Qué hay aquí
+------------
+- authenticated_page : página con sesión ya iniciada (standard_user).
+- users              : datos de usuarios cargados desde data/users.json.
+- products           : datos de productos cargados desde data/products.yaml.
+- cart_scenarios     : escenarios de carrito del mismo YAML.
+
+Nota: los fixtures 'page', 'browser' y 'browser_context' los provee
+pytest-playwright automáticamente — no hace falta redefinirlos.
+"""
+
+import json
+import yaml
+import pytest
+from pathlib import Path
+from pages.login_page import LoginPage
+
+DATA_DIR = Path(__file__).parent / "data"
+
+
+# ── Fixtures de dominio ────────────────────────────────────────────────────────
+
+@pytest.fixture
+def authenticated_page(page):
+    """Fixture que devuelve una página con sesión iniciada como standard_user.
+
+    Scope: 'function' (default) → cada test recibe una sesión fresca.
+    Ventaja: los tests son independientes entre sí; uno no contamina al otro.
+    """
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    yield page
+    # pytest-playwright cierra el contexto/página después de yield.
+
+
+# ── Fixtures de datos externos ─────────────────────────────────────────────────
+
+@pytest.fixture(scope="session")
+def users() -> dict:
+    """Carga data/users.json una sola vez por sesión de pytest.
+
+    Scope 'session': el archivo se lee una vez aunque lo usen 50 tests.
+    Ideal para datos que no cambian entre tests.
+    """
+    return json.loads((DATA_DIR / "users.json").read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="session")
+def products() -> list:
+    """Carga la lista de productos desde data/products.yaml."""
+    data = yaml.safe_load((DATA_DIR / "products.yaml").read_text(encoding="utf-8"))
+    return data["products"]
+
+
+@pytest.fixture(scope="session")
+def cart_scenarios() -> list:
+    """Carga los escenarios de carrito desde data/products.yaml."""
+    data = yaml.safe_load((DATA_DIR / "products.yaml").read_text(encoding="utf-8"))
+    return data["cart_scenarios"]
+
+================
+File: proyecto-integrador/ui-lab/data/products.yaml
+================
+# Catálogo de productos de SauceDemo usados en los tests de carrito.
+# Al separar los datos del código, agregar un nuevo escenario
+# es tan simple como añadir una línea aquí — sin tocar los tests.
+
+products:
+  - name: "Sauce Labs Backpack"
+    price: 29.99
+  - name: "Sauce Labs Bike Light"
+    price: 9.99
+  - name: "Sauce Labs Bolt T-Shirt"
+    price: 15.99
+  - name: "Sauce Labs Fleece Jacket"
+    price: 49.99
+
+# Escenarios de compra para tests data-driven del carrito.
+# 'items' es la lista de productos a agregar; 'count' es cuántos
+# debe mostrar la burbuja del carrito al terminar.
+cart_scenarios:
+  - description: "agregar un solo producto"
+    items:
+      - "Sauce Labs Backpack"
+    count: 1
+
+  - description: "agregar dos productos distintos"
+    items:
+      - "Sauce Labs Backpack"
+      - "Sauce Labs Bike Light"
+    count: 2
+
+  - description: "agregar tres productos distintos"
+    items:
+      - "Sauce Labs Backpack"
+      - "Sauce Labs Bike Light"
+      - "Sauce Labs Bolt T-Shirt"
+    count: 3
+
+================
+File: proyecto-integrador/ui-lab/data/users.json
+================
+{
+  "valid_users": [
+    {
+      "username": "standard_user",
+      "password": "secret_sauce",
+      "description": "usuario estándar con acceso normal"
+    },
+    {
+      "username": "problem_user",
+      "password": "secret_sauce",
+      "description": "usuario con comportamiento errático en UI (bug visual intencional)"
+    }
+  ],
+  "invalid_users": [
+    {
+      "username": "locked_out_user",
+      "password": "secret_sauce",
+      "expected_error": "Epic sadface: Sorry, this user has been locked out."
+    },
+    {
+      "username": "",
+      "password": "secret_sauce",
+      "expected_error": "Epic sadface: Username is required"
+    },
+    {
+      "username": "standard_user",
+      "password": "",
+      "expected_error": "Epic sadface: Password is required"
+    },
+    {
+      "username": "usuario_inexistente",
+      "password": "clave_incorrecta",
+      "expected_error": "Epic sadface: Username and password do not match any user in this service"
+    }
+  ]
+}
+
+================
+File: proyecto-integrador/ui-lab/pages/__init__.py
+================
+# pages/ — Page Objects del laboratorio de UI (SauceDemo)
+
+================
+File: proyecto-integrador/ui-lab/pages/cart_page.py
+================
+"""Page Object de la pantalla del carrito de SauceDemo."""
+
+from __future__ import annotations
+from playwright.sync_api import Page
+
+
+class CartPage:
+    """Representa https://www.saucedemo.com/cart.html."""
+
+    URL = "https://www.saucedemo.com/cart.html"
+
+    def __init__(self, page: Page) -> None:
+        self.page = page
+        self._items       = page.locator('.cart_item')
+        self._checkout_btn = page.locator('[data-test="checkout"]')
+        self._continue_btn = page.locator('[data-test="continue-shopping"]')
+
+    # ── Acciones ──────────────────────────────────────────────────────────
+
+    def proceed_to_checkout(self) -> None:
+        """Hace clic en el botón 'Checkout'."""
+        self._checkout_btn.click()
+
+    def continue_shopping(self) -> None:
+        """Regresa al inventario sin comprar."""
+        self._continue_btn.click()
+
+    # ── Consultas ─────────────────────────────────────────────────────────
+
+    def is_loaded(self) -> bool:
+        return self.page.url == self.URL
+
+    def item_count(self) -> int:
+        """Número de ítems distintos en el carrito."""
+        return self._items.count()
+
+    def item_names(self) -> list[str]:
+        """Nombres de todos los productos en el carrito."""
+        return self._items.locator('.inventory_item_name').all_inner_texts()
+
+    def contains(self, item_name: str) -> bool:
+        """True si el producto con ese nombre está en el carrito."""
+        return item_name in self.item_names()
+
+================
+File: proyecto-integrador/ui-lab/pages/inventory_page.py
+================
+"""Page Object de la pantalla de inventario de SauceDemo.
+
+Esta página aparece justo después del login exitoso.
+Permite agregar productos al carrito e ir al carrito.
+"""
+
+from __future__ import annotations
+from playwright.sync_api import Page
+
+
+class InventoryPage:
+    """Representa https://www.saucedemo.com/inventory.html."""
+
+    URL = "https://www.saucedemo.com/inventory.html"
+
+    def __init__(self, page: Page) -> None:
+        self.page = page
+        self._cart_badge = page.locator('.shopping_cart_badge')
+        self._cart_link  = page.locator('.shopping_cart_link')
+
+    # ── Acciones ──────────────────────────────────────────────────────────
+
+    def add_to_cart(self, item_name: str) -> "InventoryPage":
+        """Agrega al carrito el producto cuyo nombre coincide con item_name."""
+        # Locator contextual: busca el botón dentro del ítem que tiene ese nombre.
+        item_card = self.page.locator(
+            f'.inventory_item:has-text("{item_name}")'
+        )
+        item_card.locator("button").click()
+        return self
+
+    def go_to_cart(self) -> None:
+        """Hace clic en el ícono del carrito."""
+        self._cart_link.click()
+
+    # ── Consultas ─────────────────────────────────────────────────────────
+
+    def is_loaded(self) -> bool:
+        """True si la URL actual es la del inventario."""
+        return self.page.url == self.URL
+
+    def cart_count(self) -> int:
+        """Número en la burbuja del carrito; 0 si está vacío."""
+        if self._cart_badge.is_visible():
+            return int(self._cart_badge.inner_text())
+        return 0
+
+    def item_names(self) -> list[str]:
+        """Lista de nombres de todos los productos visibles en la página."""
+        return self.page.locator('.inventory_item_name').all_inner_texts()
+
+================
+File: proyecto-integrador/ui-lab/pages/login_page.py
+================
+"""Page Object de la pantalla de login de SauceDemo.
+
+Por qué existe este archivo
+---------------------------
+Sin POM, cada test copia sus propios locators:
+  page.locator('[data-test="username"]').fill("...")
+  page.locator('[data-test="login-button"]').click()
+
+Si SauceDemo cambia el atributo de ese botón, tienes que buscar y
+reemplazar en TODOS los tests. Con este Page Object, lo cambias aquí
+y todos los tests se benefician automáticamente.
+
+Principio DRY en acción: un solo lugar de verdad por locator.
+"""
+
+from __future__ import annotations
+from playwright.sync_api import Page
+
+
+class LoginPage:
+    """Representa la pantalla de login de https://www.saucedemo.com."""
+
+    BASE_URL = "https://www.saucedemo.com"
+
+    def __init__(self, page: Page) -> None:
+        self.page = page
+
+        # ── Locators: definidos UNA SOLA VEZ ──────────────────────────────
+        # Usamos data-test porque son los atributos más estables de la app.
+        # Si cambia el HTML pero no el atributo, el test sigue funcionando.
+        self._username  = page.locator('[data-test="username"]')
+        self._password  = page.locator('[data-test="password"]')
+        self._login_btn = page.locator('[data-test="login-button"]')
+        self._error_msg = page.locator('[data-test="error"]')
+
+    # ── Acciones ──────────────────────────────────────────────────────────
+
+    def go_to(self) -> "LoginPage":
+        """Navega a la URL de login y devuelve self (interfaz fluida)."""
+        self.page.goto(self.BASE_URL)
+        return self
+
+    def login(self, username: str, password: str) -> "LoginPage":
+        """Rellena el formulario y hace clic en el botón de login."""
+        self._username.fill(username)
+        self._password.fill(password)
+        self._login_btn.click()
+        return self
+
+    # ── Consultas (state) ─────────────────────────────────────────────────
+
+    def error_message(self) -> str:
+        """Texto del mensaje de error visible tras un login fallido."""
+        return self._error_msg.inner_text()
+
+    def has_error(self) -> bool:
+        """True si hay un mensaje de error visible en pantalla."""
+        return self._error_msg.is_visible()
+
+================
+File: proyecto-integrador/ui-lab/pyproject.toml
+================
+[project]
+name = "ui-lab"
+version = "0.1.0"
+description = "Sesión 2 — laboratorio de UI: POM, Screenplay y Data-Driven Testing sobre SauceDemo"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "playwright>=1.44.0",
+    "pytest>=8.2.0",
+    "pytest-playwright>=0.5.0",
+    "pyyaml>=6.0.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --tb=short"
+
+================
+File: proyecto-integrador/ui-lab/screenplay/__init__.py
+================
+# screenplay/ — implementación del patrón Screenplay para el laboratorio de UI
+
+================
+File: proyecto-integrador/ui-lab/screenplay/abilities/__init__.py
+================
+# abilities/ — capacidades del Actor (p. ej. abrir el navegador)
+
+================
+File: proyecto-integrador/ui-lab/screenplay/abilities/browse_web.py
+================
+"""Ability: BrowseTheWeb — le da al Actor acceso al navegador (Playwright).
+
+Una Ability encapsula UNA herramienta externa.
+Si mañana cambiamos de Playwright a Selenium, solo tocamos este archivo;
+el Actor y las Tasks no se enteran.
+"""
+
+from __future__ import annotations
+from playwright.sync_api import Page
+
+
+class BrowseTheWeb:
+    """Capacidad de interactuar con un navegador web via Playwright."""
+
+    def __init__(self, page: Page) -> None:
+        self._page = page
+
+    @classmethod
+    def using(cls, page: Page) -> "BrowseTheWeb":
+        """Constructor expresivo para usar con actor.can(BrowseTheWeb.using(page))."""
+        return cls(page)
+
+    @property
+    def page(self) -> Page:
+        """La instancia de Page de Playwright que usa el Actor."""
+        return self._page
+
+================
+File: proyecto-integrador/ui-lab/screenplay/actor.py
+================
+"""Actor — núcleo del patrón Screenplay.
+
+En Screenplay el "quién" y el "qué" están separados:
+  - El Actor es QUIÉN realiza las acciones.
+  - Las Abilities son LO QUE puede hacer (abrir el navegador, llamar una API…).
+  - Las Tasks son CÓMO lo hace (pasos concretos compuestos de acciones).
+
+Beneficio clave: los tests leen como especificaciones en inglés/español,
+no como instrucciones de bajo nivel de la herramienta.
+
+Comparación rápida:
+  POM  → inventory.add_to_cart("Sauce Labs Backpack")
+  Screenplay → carlos.attempts_to(AddToCart.the_item("Sauce Labs Backpack"))
+"""
+
+from __future__ import annotations
+from typing import Any
+
+
+class Actor:
+    """Representa a un usuario en el sistema bajo prueba."""
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self._abilities: dict[str, Any] = {}
+
+    # ── Construcción (fluent) ─────────────────────────────────────────────
+
+    def can(self, ability: Any) -> "Actor":
+        """Otorga una Ability al Actor. Retorna self para encadenar."""
+        self._abilities[type(ability).__name__] = ability
+        return self
+
+    # ── Uso de Abilities ──────────────────────────────────────────────────
+
+    def ability_to(self, ability_class: type) -> Any:
+        """Recupera la Ability del tipo indicado.
+
+        Lanza KeyError si el Actor no tiene esa Ability — señal de que
+        falta un .can(...) en el setup del test.
+        """
+        key = ability_class.__name__
+        if key not in self._abilities:
+            raise KeyError(
+                f"{self.name!r} no tiene la habilidad '{key}'. "
+                f"¿Olvidaste actor.can({key}(...))?"
+            )
+        return self._abilities[key]
+
+    # ── Ejecución de Tasks ────────────────────────────────────────────────
+
+    def attempts_to(self, *tasks: Any) -> "Actor":
+        """Ejecuta una o varias Tasks en orden. Retorna self."""
+        for task in tasks:
+            task.perform_as(self)
+        return self
+
+    def __repr__(self) -> str:
+        abilities = list(self._abilities.keys())
+        return f"Actor({self.name!r}, abilities={abilities})"
+
+================
+File: proyecto-integrador/ui-lab/screenplay/tasks/__init__.py
+================
+# tasks/ — acciones de alto nivel que el Actor puede intentar
+
+================
+File: proyecto-integrador/ui-lab/screenplay/tasks/add_to_cart.py
+================
+"""Task: AddToCart — agrega un producto al carrito desde el inventario."""
+
+from __future__ import annotations
+from screenplay.abilities.browse_web import BrowseTheWeb
+from pages.inventory_page import InventoryPage
+
+
+class AddToCart:
+    """Tarea de alto nivel: agregar un producto al carrito de compras."""
+
+    def __init__(self, item_name: str) -> None:
+        self._item_name = item_name
+
+    @classmethod
+    def the_item(cls, item_name: str) -> "AddToCart":
+        """Constructor expresivo: AddToCart.the_item('Sauce Labs Backpack')."""
+        return cls(item_name)
+
+    def perform_as(self, actor) -> None:
+        page = actor.ability_to(BrowseTheWeb).page
+        InventoryPage(page).add_to_cart(self._item_name)
+
+================
+File: proyecto-integrador/ui-lab/screenplay/tasks/login.py
+================
+"""Task: Login — inicia sesión en SauceDemo usando el Page Object de login.
+
+Las Tasks reutilizan los Page Objects: no duplican lógica,
+solo orquestan los pasos desde la perspectiva del Actor.
+"""
+
+from __future__ import annotations
+from screenplay.abilities.browse_web import BrowseTheWeb
+from pages.login_page import LoginPage
+
+
+class Login:
+    """Tarea de alto nivel: iniciar sesión en la aplicación."""
+
+    def __init__(self, username: str, password: str) -> None:
+        self._username = username
+        self._password = password
+
+    @classmethod
+    def as_user(cls, username: str, password: str) -> "Login":
+        """Constructor expresivo: Login.as_user('standard_user', 'secret_sauce')."""
+        return cls(username, password)
+
+    def perform_as(self, actor) -> None:
+        """Ejecuta la tarea usando las Abilities del Actor."""
+        page = actor.ability_to(BrowseTheWeb).page
+        LoginPage(page).go_to().login(self._username, self._password)
+
+================
+File: proyecto-integrador/ui-lab/tests/test_data_driven.py
+================
+"""Tests data-driven: datos cargados desde JSON y YAML.
+
+Qué demuestra este archivo
+--------------------------
+1. Carga de JSON en tiempo de colección (parametrize + función de carga).
+2. Uso de fixtures de datos (users, cart_scenarios) definidas en conftest.py.
+3. Principio de separación de datos y lógica: agregar un nuevo caso de test
+   es solo agregar una línea en el archivo JSON o YAML.
+
+Diferencia entre los dos enfoques de parametrize
+-------------------------------------------------
+A) load_invalid_users() se llama en tiempo de colección (antes de que pytest
+   inicie los navegadores). Útil cuando quieres ver los IDs de test en la
+   salida sin arrancar ningún recurso pesado.
+
+B) El fixture 'cart_scenarios' se inyecta en el test — los datos se resuelven
+   justo antes de que el test comience. Útil para datos que dependen de otros
+   fixtures o de estado externo.
+"""
+
+import json
+import pytest
+from pathlib import Path
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
+
+DATA_DIR = Path(__file__).parent.parent / "data"
+
+
+# ── Enfoque A: carga en tiempo de colección ────────────────────────────────────
+
+def _load_invalid_users():
+    """Lee data/users.json y devuelve una lista de pytest.param para parametrize."""
+    data = json.loads((DATA_DIR / "users.json").read_text(encoding="utf-8"))
+    return [
+        pytest.param(
+            u["username"],
+            u["password"],
+            u["expected_error"],
+            id=u["username"] or "username_vacio",
+        )
+        for u in data["invalid_users"]
+    ]
+
+
+@pytest.mark.parametrize("username,password,expected_error", _load_invalid_users())
+def test_login_invalido_desde_json(page, username, password, expected_error):
+    """Cada usuario inválido del JSON debe mostrar el error correcto."""
+    login = LoginPage(page)
+    login.go_to().login(username, password)
+    assert expected_error in login.error_message()
+
+
+# ── Enfoque B: escenarios de carrito desde YAML (via fixture) ──────────────────
+
+@pytest.mark.parametrize("scenario_idx", [0, 1, 2])
+def test_carrito_desde_yaml(authenticated_page, cart_scenarios, scenario_idx):
+    """Verifica que la burbuja del carrito refleja el número correcto de productos.
+
+    Se parametriza por índice para poder usar el fixture cart_scenarios
+    (que se carga desde YAML en conftest.py) y al mismo tiempo tener
+    tests nombrados individualmente en el reporte.
+    """
+    scenario = cart_scenarios[scenario_idx]
+    inventory = InventoryPage(authenticated_page)
+
+    for item_name in scenario["items"]:
+        inventory.add_to_cart(item_name)
+
+    assert inventory.cart_count() == scenario["count"], (
+        f"Escenario '{scenario['description']}': "
+        f"se esperaban {scenario['count']} ítems en el carrito."
+    )
+
+================
+File: proyecto-integrador/ui-lab/tests/test_login_pom.py
+================
+"""Tests de login usando el patrón Page Object Model (POM).
+
+Qué demuestra este archivo
+--------------------------
+1. POM en uso: LoginPage e InventoryPage son los únicos que conocen los locators.
+2. DRY: el test no repite ningún selector; todo está en el Page Object.
+3. Parametrize: varios casos de login inválido con una sola función de test.
+4. Legibilidad: el test describe QUÉ pasa, no CÓMO lo hace el navegador.
+"""
+
+import pytest
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+
+
+# ── Caso feliz ────────────────────────────────────────────────────────────────
+
+def test_login_exitoso_redirige_al_inventario(page):
+    """Un usuario válido debe llegar al inventario tras el login."""
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    assert InventoryPage(page).is_loaded(), (
+        "Se esperaba estar en /inventory.html después del login exitoso."
+    )
+
+
+def test_inventario_muestra_productos(page):
+    """El inventario debe listar al menos un producto tras el login."""
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    nombres = InventoryPage(page).item_names()
+    assert len(nombres) > 0, "El inventario no debería estar vacío."
+
+
+# ── Casos inválidos (parametrize) ─────────────────────────────────────────────
+
+INVALID_LOGIN_CASES = [
+    pytest.param(
+        "locked_out_user", "secret_sauce",
+        "Sorry, this user has been locked out.",
+        id="usuario_bloqueado",
+    ),
+    pytest.param(
+        "", "secret_sauce",
+        "Username is required",
+        id="username_vacio",
+    ),
+    pytest.param(
+        "standard_user", "",
+        "Password is required",
+        id="password_vacio",
+    ),
+    pytest.param(
+        "usuario_inventado", "clave_incorrecta",
+        "Username and password do not match",
+        id="credenciales_incorrectas",
+    ),
+]
+
+
+@pytest.mark.parametrize("username,password,expected_error", INVALID_LOGIN_CASES)
+def test_login_invalido_muestra_error(page, username, password, expected_error):
+    """Cada credencial inválida debe mostrar el mensaje de error correcto."""
+    login = LoginPage(page)
+    login.go_to().login(username, password)
+
+    assert login.has_error(), "Se esperaba un mensaje de error visible."
+    assert expected_error in login.error_message(), (
+        f"Error esperado: '{expected_error}'\n"
+        f"Error obtenido: '{login.error_message()}'"
+    )
+
+================
+File: proyecto-integrador/ui-lab/tests/test_login_screenplay.py
+================
+"""Tests de login usando el patrón Screenplay.
+
+Qué demuestra este archivo
+--------------------------
+1. Screenplay vs POM: el mismo flujo, pero narrado desde la perspectiva
+   del usuario (Actor), no de la herramienta.
+2. Composición de Tasks: attempts_to() acepta múltiples tareas en cadena.
+3. Legibilidad de intención: "carlos intenta iniciar sesión como standard_user"
+   es más expresivo que una secuencia de fill/click.
+
+Cuándo usar Screenplay sobre POM
+---------------------------------
+- Tests con múltiples roles (admin + usuario regular en el mismo test).
+- Flujos complejos donde nombrar al Actor clarifica el escenario.
+- Equipos que trabajan con Gherkin / BDD y quieren alineación lenguaje↔código.
+"""
+
+from screenplay.actor import Actor
+from screenplay.abilities.browse_web import BrowseTheWeb
+from screenplay.tasks.login import Login
+from screenplay.tasks.add_to_cart import AddToCart
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
+
+
+def test_actor_inicia_sesion_exitosamente(page):
+    """Un Actor con BrowseTheWeb puede iniciar sesión en la aplicación."""
+    carlos = Actor("Carlos").can(BrowseTheWeb.using(page))
+
+    carlos.attempts_to(
+        Login.as_user("standard_user", "secret_sauce"),
+    )
+
+    assert InventoryPage(page).is_loaded(), (
+        "Carlos debería estar en el inventario tras el login."
+    )
+
+
+def test_actor_agrega_producto_al_carrito(page):
+    """Un Actor puede iniciar sesión y agregar un producto al carrito."""
+    ana = Actor("Ana").can(BrowseTheWeb.using(page))
+
+    ana.attempts_to(
+        Login.as_user("standard_user", "secret_sauce"),
+        AddToCart.the_item("Sauce Labs Backpack"),
+    )
+
+    assert InventoryPage(page).cart_count() == 1, (
+        "Ana debería tener 1 producto en el carrito."
+    )
+
+
+def test_actor_agrega_multiples_productos(page):
+    """Un Actor puede agregar varios productos en una sola secuencia."""
+    diego = Actor("Diego").can(BrowseTheWeb.using(page))
+
+    diego.attempts_to(
+        Login.as_user("standard_user", "secret_sauce"),
+        AddToCart.the_item("Sauce Labs Backpack"),
+        AddToCart.the_item("Sauce Labs Bike Light"),
+    )
+
+    assert InventoryPage(page).cart_count() == 2
+
+
+def test_actor_verifica_carrito(page):
+    """Un Actor puede navegar al carrito y verificar los productos agregados."""
+    sofia = Actor("Sofía").can(BrowseTheWeb.using(page))
+
+    sofia.attempts_to(
+        Login.as_user("standard_user", "secret_sauce"),
+        AddToCart.the_item("Sauce Labs Fleece Jacket"),
+    )
+
+    InventoryPage(page).go_to_cart()
+    cart = CartPage(page)
+
+    assert cart.is_loaded()
+    assert cart.contains("Sauce Labs Fleece Jacket")
+
+================
+File: sesiones/sesion-02/PPT_CONTENIDO.md
+================
+# PPT — Sesión 2: POM, Screenplay y Data-Driven Testing
+
+> Formato: cada slide tiene **título**, **cuerpo** (bullets o código) y una nota de contexto corta.
+> Copiar y pegar directamente en PowerPoint/Google Slides.
+
+---
+
+## Slide 1 — Portada
+
+**Título:** Sesión 2: Desarrollo de Scripts de Prueba
+
+**Subtítulo:** Page Object Model · Screenplay · Fixtures · Data-Driven Testing
+
+**Detalle:** `proyecto-integrador/ui-lab/` · SauceDemo como aplicación de práctica
+
+---
+
+## Slide 2 — Agenda
+
+**Título:** ¿Qué vamos a construir hoy?
+
+- 🔴 **Bloque A** (45 min) — El problema del código espagueti y cómo resolverlo
+- ☕ Descanso — 15 min
+- 🟡 **Bloque B** (45 min) — Laboratorio guiado: POM + fixtures + datos externos
+- ☕ Descanso — 15 min
+- 🟢 **Bloque C** (45 min) — Ejercicios individuales y mini reto → salida
+
+**Al final de la sesión tendrás:** una suite de UI funcional lista para el flujo CI/CD
+
+---
+
+## Slide 3 — El Problema
+
+**Título:** ¿Qué pasa si no usamos patrones?
+
+```python
+# En test_login.py
+page.locator('[data-test="login-button"]').click()
+
+# En test_checkout.py
+page.locator('[data-test="login-button"]').click()  # ← copia
+
+# En test_cart.py
+page.locator('[data-test="login-button"]').click()  # ← copia x3
+```
+
+**Consecuencia:** SauceDemo cambia el atributo → 40 tests rotos → 2 horas de refactoring
+
+---
+
+## Slide 4 — La Solución: POM
+
+**Título:** Page Object Model (POM)
+
+> **Regla:** cada pantalla tiene un archivo Python. Los locators viven ahí, solo ahí.
+
+```python
+# pages/login_page.py
+class LoginPage:
+    def __init__(self, page):
+        self._login_btn = page.locator('[data-test="login-button"]')
+
+    def login(self, username, password):
+        self._username.fill(username)
+        self._password.fill(password)
+        self._login_btn.click()
+```
+
+**Resultado:** cambias el locator en un lugar → todos los tests funcionan
+
+---
+
+## Slide 5 — Test con POM
+
+**Título:** Cómo se ve el test con POM
+
+```python
+# tests/test_login_pom.py
+def test_login_exitoso(page):
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    assert InventoryPage(page).is_loaded()
+```
+
+✅ El test describe **qué** sucede, no **cómo** lo hace el navegador
+✅ Sin selectores CSS expuestos en el test
+✅ Si cambia la UI → solo cambias el Page Object
+
+---
+
+## Slide 6 — Estructura de Pages
+
+**Título:** Los tres Page Objects del laboratorio
+
+```
+pages/
+├── login_page.py      ← /  (pantalla de login)
+├── inventory_page.py  ← /inventory.html
+└── cart_page.py       ← /cart.html
+```
+
+**Patrón en cada archivo:**
+- Locators → privados (`self._btn`)
+- Acciones → métodos públicos con nombre de negocio (`login`, `add_to_cart`)
+- Consultas → métodos que devuelven estado (`is_loaded`, `cart_count`)
+
+---
+
+## Slide 7 — Más allá del POM: Screenplay
+
+**Título:** Screenplay — tests que se leen como historias
+
+**Los tres bloques de Screenplay:**
+
+| Bloque | Pregunta | Ejemplo |
+|---|---|---|
+| **Actor** | ¿Quién? | `carlos = Actor("Carlos")` |
+| **Ability** | ¿Con qué herramienta? | `.can(BrowseTheWeb.using(page))` |
+| **Task** | ¿Qué intenta hacer? | `Login.as_user(...)` |
+
+---
+
+## Slide 8 — Test con Screenplay
+
+**Título:** El mismo flujo, narrado diferente
+
+```python
+# POM
+LoginPage(page).go_to().login("standard_user", "secret_sauce")
+InventoryPage(page).add_to_cart("Sauce Labs Backpack")
+
+# Screenplay
+carlos = Actor("Carlos").can(BrowseTheWeb.using(page))
+carlos.attempts_to(
+    Login.as_user("standard_user", "secret_sauce"),
+    AddToCart.the_item("Sauce Labs Backpack"),
+)
+```
+
+**¿Cuál prefieres?** → depende del contexto del equipo
+
+---
+
+## Slide 9 — POM vs Screenplay
+
+**Título:** ¿Cuándo usar cada uno?
+
+| Situación | Recomendación |
+|---|---|
+| Suite pequeña, un solo rol | **POM** es suficiente |
+| Múltiples roles en el mismo test | **Screenplay** clarifica quién hace qué |
+| Equipo con Gherkin / BDD | **Screenplay** alinea el lenguaje |
+| Empezando desde cero | **POM** primero, Screenplay si crece |
+
+**Regla de oro:** usa el patrón más simple que resuelva tu problema (KISS)
+
+---
+
+## Slide 10 — DRY y KISS
+
+**Título:** Los principios que unifican todo
+
+**DRY** — *Don't Repeat Yourself*
+- Si copias código, algo está mal
+- Locators → Page Object · Setup → fixture · Datos → JSON/YAML
+
+**KISS** — *Keep It Simple, Stupid*
+- La solución más simple que funciona, es la correcta
+- No añadas Screenplay si POM ya resuelve el problema
+
+---
+
+## Slide 11 — Fixtures en pytest
+
+**Título:** Fixtures: setup reutilizable sin duplicar código
+
+```python
+# conftest.py — disponible para TODOS los tests sin importar nada
+
+@pytest.fixture
+def authenticated_page(page):
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    yield page   # ← setup antes / teardown después del yield
+```
+
+```python
+# En el test — solo declara lo que necesita
+def test_agregar_producto(authenticated_page):
+    InventoryPage(authenticated_page).add_to_cart("Sauce Labs Backpack")
+    assert InventoryPage(authenticated_page).cart_count() == 1
+```
+
+---
+
+## Slide 12 — Scope de Fixtures
+
+**Título:** Scope: cuántas veces se ejecuta cada fixture
+
+| Scope | Se ejecuta | Cuándo usarlo |
+|---|---|---|
+| `function` (default) | Por cada test | Estado que no debe compartirse |
+| `class` | Por clase de test | Tests agrupados que comparten contexto |
+| `module` | Por archivo `.py` | Setup costoso que aplica a un módulo |
+| `session` | Una vez por corrida | Datos estáticos, conexiones pesadas |
+
+```python
+@pytest.fixture(scope="session")
+def users():
+    return json.loads((DATA_DIR / "users.json").read_text())
+```
+
+---
+
+## Slide 13 — Data-Driven: JSON
+
+**Título:** Datos externos desde JSON
+
+```python
+# data/users.json
+{
+  "invalid_users": [
+    {"username": "locked_out_user", "password": "secret_sauce",
+     "expected_error": "Sorry, this user has been locked out."},
+    {"username": "", "password": "secret_sauce",
+     "expected_error": "Username is required"}
+  ]
+}
+```
+
+```python
+# test_data_driven.py
+@pytest.mark.parametrize("username,password,expected_error", _load_invalid_users())
+def test_login_invalido(page, username, password, expected_error):
+    login = LoginPage(page).go_to().login(username, password)
+    assert expected_error in login.error_message()
+```
+
+---
+
+## Slide 14 — Data-Driven: YAML
+
+**Título:** Datos externos desde YAML
+
+```yaml
+# data/products.yaml
+cart_scenarios:
+  - description: "agregar un solo producto"
+    items: ["Sauce Labs Backpack"]
+    count: 1
+  - description: "agregar dos productos"
+    items: ["Sauce Labs Backpack", "Sauce Labs Bike Light"]
+    count: 2
+```
+
+```python
+@pytest.mark.parametrize("scenario_idx", [0, 1, 2])
+def test_carrito_desde_yaml(authenticated_page, cart_scenarios, scenario_idx):
+    scenario = cart_scenarios[scenario_idx]
+    for item in scenario["items"]:
+        InventoryPage(authenticated_page).add_to_cart(item)
+    assert InventoryPage(authenticated_page).cart_count() == scenario["count"]
+```
+
+---
+
+## Slide 15 — Ventaja del Data-Driven
+
+**Título:** ¿Por qué separar datos del código?
+
+❌ **Sin separación:**
+- Agregar caso = modificar el test = riesgo de romper algo
+
+✅ **Con separación:**
+- Agregar caso = una línea en el JSON/YAML = cero riesgo en el código
+
+**Regla:** si el test cambia solo porque los datos cambian, los datos están en el lugar equivocado
+
+---
+
+## Slide 16 — Estructura del laboratorio
+
+**Título:** Lo que tienes en `proyecto-integrador/ui-lab/`
+
+```
+ui-lab/
+├── conftest.py          ← fixtures compartidas
+├── pages/               ← Page Objects (LoginPage, InventoryPage, CartPage)
+├── screenplay/          ← Actor, Abilities, Tasks
+│   ├── actor.py
+│   ├── abilities/browse_web.py
+│   └── tasks/ (login.py, add_to_cart.py)
+├── data/
+│   ├── users.json       ← datos de usuarios
+│   └── products.yaml    ← catálogo + escenarios de carrito
+└── tests/
+    ├── test_login_pom.py
+    ├── test_login_screenplay.py
+    └── test_data_driven.py
+```
+
+---
+
+## Slide 17 — Comandos del laboratorio
+
+**Título:** Setup y ejecución
+
+```bash
+cd proyecto-integrador/ui-lab
+
+# Primera vez
+uv sync --group dev
+uv run playwright install chromium
+
+# Correr todos los tests
+uv run pytest -v
+
+# Solo un archivo
+uv run pytest tests/test_login_pom.py -v
+
+# Con navegador visible (para depurar)
+uv run pytest --headed -v
+```
+
+---
+
+## Slide 18 — Ejercicio Individual
+
+**Título:** Tu turno — Bloque C
+
+**Ejercicio 1:** Crea `pages/checkout_page.py` con:
+- Locators de `first-name`, `last-name`, `postal-code`, botón `continue`
+- Método `fill_shipping(first, last, zip_code)`
+- Método `has_error() → bool`
+
+**Ejercicio 2:** Crea `screenplay/tasks/complete_checkout.py`
+- Task: `CompleteCheckout.with_info(first, last, zip_code)`
+
+---
+
+## Slide 19 — Mini Reto
+
+**Título:** Mini Reto — Suite data-driven extendida
+
+1. Agrega un **cuarto escenario** en `data/products.yaml` con 4 productos distintos
+2. Actualiza `test_data_driven.py` para que también pruebe ese escenario
+3. Corre la suite completa: todos los tests deben pasar
+
+```bash
+uv run pytest -v
+```
+
+**Restricción:** solo modificas el YAML y el test parametrizado. Los Page Objects y el conftest no se tocan.
+
+---
+
+## Slide 20 — Resumen
+
+**Título:** Lo que aprendiste hoy
+
+| Patrón / Herramienta | Para qué sirve |
+|---|---|
+| **POM** | Centralizar locators y eliminar duplicación |
+| **Screenplay** | Narrar flujos complejos con múltiples roles |
+| **DRY / KISS** | Guías de diseño que aplican a todo |
+| **Fixtures (scope)** | Setup/teardown reutilizable y eficiente |
+| **JSON / YAML** | Separar datos de la lógica de pruebas |
+
+**Siguiente sesión:** APIs REST — Postman, Newman y validaciones de servicios web
+
+================
+File: sesiones/sesion-02/SESION_02.md
+================
+# Sesión 2 — Desarrollo de Scripts: POM, Screenplay y Data-Driven Testing
+
+> **Duración:** 3 horas · **Ritmo:** Bloque A (45 min) → descanso 15 min → Bloque B (45 min) → descanso 15 min → Bloque C (45 min) → salida
+> **Lo que vas a construir:** una suite de pruebas de interfaz de usuario sobre SauceDemo usando Page Object Model, Screenplay, fixtures avanzadas y datos externos en JSON y YAML.
+
+---
+
+## Antes de empezar
+
+Necesitas tener instalado `uv` (lo vimos en la Sesión 1). Luego:
+
+```bash
+# Desde la raíz del curso
+cd proyecto-integrador/ui-lab
+
+# 1. Instala las dependencias Python del laboratorio
+uv sync --group dev
+
+# 2. Descarga el navegador Chromium (solo la primera vez; ~150 MB)
+uv run playwright install chromium
+
+# 3. Verifica que todo funciona
+uv run pytest --collect-only
+```
+
+Deberías ver los 13 tests listados sin errores de importación.
+Si algo falla aquí, detente y revisa el error antes de continuar.
+
+---
+
+## Bloque A — El problema del código espagueti (45 min)
+
+### El punto de partida: qué pasa sin patrones
+
+Imagina que escribes tu primer test de login sin ningún patrón. Funciona.
+Luego escribes el segundo. Luego el tercero. Al cabo de una semana tienes esto:
+
+```python
+# ❌ Código espagueti — NO hagas esto
+def test_login():
+    page.goto("https://www.saucedemo.com")
+    page.locator('[data-test="username"]').fill("standard_user")
+    page.locator('[data-test="password"]').fill("secret_sauce")
+    page.locator('[data-test="login-button"]').click()
+    assert page.url == "https://www.saucedemo.com/inventory.html"
+
+def test_agregar_producto():
+    page.goto("https://www.saucedemo.com")
+    page.locator('[data-test="username"]').fill("standard_user")   # copia
+    page.locator('[data-test="password"]').fill("secret_sauce")    # copia
+    page.locator('[data-test="login-button"]').click()             # copia
+    page.locator('.inventory_item:has-text("Sauce Labs Backpack")').locator("button").click()
+    assert page.locator('.shopping_cart_badge').inner_text() == "1"
+```
+
+Ahora SauceDemo cambia `data-test="login-button"` a `data-test="submit-btn"`.
+Tienes que buscar ese string en **todos** tus archivos de test. Si tienes 40 tests… éxito.
+
+---
+
+### La solución: Page Object Model (POM)
+
+**Idea central:** cada pantalla de la aplicación tiene un solo archivo Python
+que conoce todos sus locators y acciones. Los tests solo llaman métodos.
+
+Abre el archivo `pages/login_page.py`. Esto es lo que verás:
+
+```python
+class LoginPage:
+    def __init__(self, page: Page) -> None:
+        self.page = page
+        self._username  = page.locator('[data-test="username"]')
+        self._password  = page.locator('[data-test="password"]')
+        self._login_btn = page.locator('[data-test="login-button"]')
+        self._error_msg = page.locator('[data-test="error"]')
+
+    def go_to(self) -> "LoginPage":
+        self.page.goto("https://www.saucedemo.com")
+        return self          # ← devuelve self para encadenar: .go_to().login(...)
+
+    def login(self, username: str, password: str) -> "LoginPage":
+        self._username.fill(username)
+        self._password.fill(password)
+        self._login_btn.click()
+        return self
+
+    def error_message(self) -> str:
+        return self._error_msg.inner_text()
+```
+
+Ahora el test queda así:
+
+```python
+# ✅ Con POM: limpio, DRY, sin locators expuestos
+def test_login_exitoso(page):
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    assert InventoryPage(page).is_loaded()
+```
+
+Si cambia el locator del botón → solo tocas `login_page.py`. Todos los tests se benefician.
+
+**Abre también:** `pages/inventory_page.py` y `pages/cart_page.py`.
+Sigue la misma estructura: locators privados, métodos públicos con nombres de negocio.
+
+---
+
+### Lleva el POM más lejos: Screenplay
+
+POM resuelve el problema del mantenimiento de locators.
+Screenplay resuelve el problema de la **legibilidad de intención**.
+
+**El modelo mental de Screenplay:**
+
+| Concepto | Qué es | Archivo |
+|---|---|---|
+| **Actor** | Quién realiza las acciones | `screenplay/actor.py` |
+| **Ability** | Qué herramienta usa el Actor | `screenplay/abilities/browse_web.py` |
+| **Task** | Qué intenta hacer (en términos de negocio) | `screenplay/tasks/login.py` |
+
+Un test con Screenplay se lee así:
+
+```python
+def test_actor_inicia_sesion(page):
+    carlos = Actor("Carlos").can(BrowseTheWeb.using(page))
+    carlos.attempts_to(
+        Login.as_user("standard_user", "secret_sauce"),
+        AddToCart.the_item("Sauce Labs Backpack"),
+    )
+    assert InventoryPage(page).cart_count() == 1
+```
+
+Cada línea es una oración en español. Cualquier persona del equipo entiende qué hace este test sin saber nada de Playwright.
+
+Abre `screenplay/actor.py` y lee el método `attempts_to`. Luego abre `screenplay/tasks/login.py` y observa cómo la Task usa el Page Object internamente — no duplica nada.
+
+---
+
+### DRY y KISS: los dos principios que unifican todo
+
+- **DRY** (*Don't Repeat Yourself*): si escribes lo mismo dos veces, algo está mal. Los locators van en el Page Object una sola vez.
+- **KISS** (*Keep It Simple, Stupid*): la solución más simple que funciona es la correcta. Si POM resuelve tu problema, no necesitas Screenplay.
+
+**Regla práctica:**
+- Suite pequeña con un solo rol de usuario → **POM es suficiente**.
+- Suite con múltiples roles o flujos complejos de negocio → **Screenplay clarifica la intención**.
+
+---
+
+## Bloque B — Laboratorio guiado (45 min)
+
+### Lab 1: corre los tests base y léelos
+
+```bash
+# Desde proyecto-integrador/ui-lab
+uv run pytest tests/test_login_pom.py -v
+```
+
+Deberías ver 6 tests pasando. Mientras corren, abre `tests/test_login_pom.py` y sigue el flujo: el test llama `LoginPage`, que llama el locator, que interactúa con el navegador.
+
+```bash
+# Ahora los tests de Screenplay
+uv run pytest tests/test_login_screenplay.py -v
+```
+
+Compara las dos versiones del mismo flujo de login. ¿Cuál te resulta más legible?
+
+---
+
+### Lab 2: explora los fixtures en conftest.py
+
+Abre `conftest.py`. Hay tres tipos de fixture aquí:
+
+**a) `authenticated_page` — scope function (default)**
+```python
+@pytest.fixture
+def authenticated_page(page):
+    LoginPage(page).go_to().login("standard_user", "secret_sauce")
+    yield page
+```
+Cada test que use `authenticated_page` recibe una sesión fresca.
+El `yield` separa el setup (antes) del teardown (después).
+pytest-playwright se encarga de cerrar la página al terminar.
+
+**b) `users` y `products` — scope session**
+```python
+@pytest.fixture(scope="session")
+def users() -> dict:
+    return json.loads((DATA_DIR / "users.json").read_text())
+```
+El archivo se lee **una sola vez** aunque 20 tests lo usen. Eficiente.
+
+Corre esto y observa cuánto tarda:
+```bash
+uv run pytest tests/test_data_driven.py -v
+```
+
+---
+
+### Lab 3: data-driven desde JSON y YAML
+
+Abre `tests/test_data_driven.py`. Hay dos enfoques:
+
+**Enfoque A — parametrize con función de carga (JSON):**
+```python
+def _load_invalid_users():
+    data = json.loads((DATA_DIR / "users.json").read_text())
+    return [
+        pytest.param(u["username"], u["password"], u["expected_error"],
+                     id=u["username"] or "username_vacio")
+        for u in data["invalid_users"]
+    ]
+
+@pytest.mark.parametrize("username,password,expected_error", _load_invalid_users())
+def test_login_invalido_desde_json(page, username, password, expected_error):
+    ...
+```
+
+Los IDs de test vienen del JSON. Agregar un nuevo caso inválido = una línea en `data/users.json`.
+
+**Enfoque B — fixture de datos (YAML):**
+```python
+@pytest.mark.parametrize("scenario_idx", [0, 1, 2])
+def test_carrito_desde_yaml(authenticated_page, cart_scenarios, scenario_idx):
+    scenario = cart_scenarios[scenario_idx]
+    ...
+```
+
+El fixture `cart_scenarios` carga `data/products.yaml` una vez por sesión.
+Agrega un nuevo escenario en el YAML → el test lo toma en la siguiente corrida.
+
+---
+
+## Bloque C — Ejercicios y Mini Reto (45 min)
+
+### Ejercicio 1 — Page Object para el Checkout
+
+SauceDemo tiene una pantalla de checkout en `/checkout-step-one.html`.
+Crea el archivo `pages/checkout_page.py` con:
+
+- Locators de los campos `first-name`, `last-name`, `postal-code` y el botón `continue`.
+- Método `fill_shipping(first, last, zip_code)` que rellena los tres campos.
+- Método `continue_to_overview()` que hace clic en continuar.
+- Método `has_error()` que devuelve `True` si hay un mensaje de error visible.
+
+Pista: inspecciona el HTML de SauceDemo con las DevTools del navegador y busca los atributos `data-test`. Todos los elementos interactivos los tienen.
+
+Una vez creado, escribe un test rápido en `tests/test_checkout_pom.py`:
+```python
+def test_checkout_sin_nombre_muestra_error(authenticated_page):
+    InventoryPage(authenticated_page).add_to_cart("Sauce Labs Backpack").go_to_cart()
+    CartPage(authenticated_page).proceed_to_checkout()
+    checkout = CheckoutPage(authenticated_page)
+    checkout.fill_shipping("", "", "").continue_to_overview()
+    assert checkout.has_error()
+```
+
+---
+
+### Ejercicio 2 — Task de Screenplay: CompleteCheckout
+
+Crea `screenplay/tasks/complete_checkout.py` con una Task que:
+1. Navegue al carrito.
+2. Haga clic en Checkout.
+3. Rellene los datos de envío.
+4. Haga clic en continuar.
+
+Nómbrala `CompleteCheckout.with_info(first, last, zip_code)`.
+
+---
+
+### Mini Reto — Suite data-driven con YAML extendido
+
+1. Abre `data/products.yaml` y agrega un cuarto escenario de carrito con 4 productos.
+2. Actualiza `test_data_driven.py::test_carrito_desde_yaml` para que también pruebe el índice 3.
+3. Corre la suite completa y asegúrate de que los 14 tests pasan:
+
+```bash
+uv run pytest -v
+```
+
+**Pista:** no toques el código de los Page Objects ni del conftest; solo los archivos de datos y el test parametrizado.
+
+---
+
+### Errores comunes
+
+| Error | Causa | Solución |
+|---|---|---|
+| `ModuleNotFoundError: pages` | pytest no encuentra el módulo porque no está en `PYTHONPATH` | Verifica que `pythonpath = ["."]` está en `pyproject.toml` y que corriste desde `ui-lab/` |
+| `playwright._impl._errors.TimeoutError` | El locator no existe o tarda en aparecer | Usa `page.wait_for_selector(...)` o revisa que el selector sea correcto con las DevTools |
+| `KeyError: 'BrowseTheWeb'` | El Actor no tiene la Ability registrada | Asegúrate de llamar `actor.can(BrowseTheWeb.using(page))` antes de `attempts_to` |
+| Tests pasan localmente pero fallan en CI | Diferencias de timing en modo headless | Agrega `--headed` para depurar localmente; en CI usa `--browser chromium` explícitamente |
+
+---
+
+### Para llevar
+
+Después de esta sesión tienes:
+- Un **framework de UI** funcional sobre SauceDemo con POM + Screenplay.
+- **Datos desacoplados** del código en JSON y YAML.
+- **Fixtures** que manejan setup/teardown automáticamente.
+- La base de la **Etapa 4** del proyecto integrador (pruebas de UI en el flujo CI/CD).
+
+En la **Sesión 3** conectamos esta suite con APIs REST usando Postman y Newman.
+
+================
+File: SETUP_ESTUDIANTES.md
+================
+# Guía de Setup para Estudiantes
+
+## Bienvenido al curso
+
+Este documento te guía paso a paso para tener tu entorno listo **antes de la primera clase**.
+Sigue cada paso en orden. Si algo falla, revisa la sección de troubleshooting al final.
+
+---
+
+## 1. Crear tu copia del repositorio
+
+El repositorio del curso es un **Template de GitHub**. Esto significa que cada estudiante
+crea su propia copia independiente a partir del estado actual del material.
+
+### Pasos:
+
+1. Abre el link del repositorio que te compartió tu instructor.
+2. Haz clic en el botón verde **"Use this template"** (arriba a la derecha).
+3. Selecciona **"Create a new repository"**.
+4. Configura tu nuevo repo:
+   - **Owner:** tu cuenta de GitHub
+   - **Repository name:** `curso-automatizacion` (o el nombre que prefieras)
+   - **Visibility:** Private (recomendado) o Public
+5. Clic en **"Create repository"**.
+
+Ahora tienes tu propia copia del curso en `https://github.com/TU_USUARIO/curso-automatizacion`.
+
+---
+
+## 2. Clonar tu repo en tu computadora
+
+Abre una terminal (PowerShell en Windows, Terminal en macOS/Linux):
+
+```bash
+git clone https://github.com/TU_USUARIO/curso-automatizacion.git
+cd curso-automatizacion
+```
+
+**Verifica** que ves esta estructura de carpetas:
+
+```
+curso-automatizacion/
+├── PLAN_MAESTRO.md
+├── Taskfile.yml
+├── .gitignore
+├── SETUP_ESTUDIANTES.md       ← este documento
+└── proyecto-integrador/
+    ├── trazabilidad/
+    │   └── matriz-trazabilidad.csv
+    └── design-lab/
+        ├── pyproject.toml
+        ├── uv.lock
+        ├── data/
+        │   └── decision_table.yaml
+        ├── design_lab/
+        │   ├── __init__.py
+        │   ├── discount.py
+        │   └── pairwise_matrix.py
+        └── tests/
+            ├── test_equivalence_boundary.py
+            ├── test_decision_table.py
+            └── test_pairwise.py
+```
+
+---
+
+## 3. Instalar Python 3.12+
+
+El curso usa Python 3.12 o superior. Verifica si ya lo tienes:
+
+```bash
+python --version
+```
+
+**Output esperado:** `Python 3.12.x` o superior (3.13 también funciona).
+
+### Si no tienes Python o tienes una versión menor a 3.12:
+
+1. Descarga el instalador desde https://www.python.org/downloads/
+2. **IMPORTANTE:** durante la instalación, marca la casilla **"Add Python to PATH"** (Windows).
+3. Verifica de nuevo:
+
+```bash
+python --version
+```
+
+> **Nota:** si en tu sistema el comando es `python3` en lugar de `python`, está bien.
+> `uv` usa cualquiera de los dos.
+
+---
+
+## 4. Instalar `uv` (gestor de dependencias)
+
+`uv` maneja las dependencias de Python por proyecto. Se instala una sola vez.
+
+### Windows (PowerShell):
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### macOS / Linux:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Verificar instalación:
+
+```bash
+uv --version
+```
+
+**Output esperado:** algo como `uv 0.x.x` (cualquier versión 0.5+ está bien).
+
+Si el comando no se reconoce, **cierra y vuelve a abrir la terminal** e intenta de nuevo.
+
+---
+
+## 5. Instalar las dependencias del laboratorio
+
+Desde la raíz del repo clonado:
+
+```bash
+cd proyecto-integrador/design-lab
+uv sync
+```
+
+**Output esperado:**
+
+```
+Resolved N packages in Xms
+Installed pytest-8.x.x pyyaml-6.x.x allpairspy-2.x.x ...
+```
+
+Esto descarga `pytest`, `allpairspy` y `pyyaml` en un entorno virtual aislado (`.venv/`).
+No toca nada más de tu sistema.
+
+---
+
+## 6. Verificar que todo funciona
+
+```bash
+uv run pytest -v
+```
+
+**Output esperado (25 tests, todos PASSED):**
+
+```
+tests/test_decision_table.py::test_decision_table[TC-DT-R1] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R2] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R3] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R4] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R5] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R6] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R7] PASSED
+tests/test_decision_table.py::test_decision_table[TC-DT-R8] PASSED
+tests/test_decision_table.py::test_decision_table_is_complete PASSED
+tests/test_equivalence_boundary.py::test_valid_partitions[TC-DSC-EP-001-standard-base] PASSED
+tests/test_equivalence_boundary.py::test_valid_partitions[TC-DSC-EP-002-premium-base] PASSED
+tests/test_equivalence_boundary.py::test_valid_partitions[TC-DSC-EP-003-standard-cupon] PASSED
+tests/test_equivalence_boundary.py::test_valid_partitions[TC-DSC-EP-004-premium-volumen] PASSED
+tests/test_equivalence_boundary.py::test_boundary_values[TC-DSC-BVA-001-minimo-valido] PASSED
+tests/test_equivalence_boundary.py::test_boundary_values[TC-DSC-BVA-003-justo-bajo-umbral-volumen] PASSED
+tests/test_equivalence_boundary.py::test_boundary_values[TC-DSC-BVA-004-umbral-volumen-exacto] PASSED
+tests/test_equivalence_boundary.py::test_boundary_values[TC-DSC-BVA-005-maximo-valido] PASSED
+tests/test_equivalence_boundary.py::test_invalid_partitions_raise[TC-DSC-INV-001-total-cero] PASSED
+tests/test_equivalence_boundary.py::test_invalid_partitions_raise[TC-DSC-INV-002-sobre-maximo] PASSED
+tests/test_equivalence_boundary.py::test_invalid_partitions_raise[TC-DSC-INV-003-tipo-cliente-desconocido] PASSED
+tests/test_equivalence_boundary.py::test_invalid_partitions_raise[TC-DSC-INV-004-total-negativo] PASSED
+tests/test_pairwise.py::test_pairwise_reduces_cartesian_product PASSED
+tests/test_pairwise.py::test_pairwise_respects_constraints PASSED
+tests/test_pairwise.py::test_pairwise_covers_every_achievable_pair PASSED
+tests/test_pairwise.py::test_impossible_pairs_are_not_required PASSED
+
+============================= 25 passed in 0.33s ==============================
+```
+
+Si ves **25 passed** — tu entorno está listo.
+
+---
+
+## 7. Instalar `task` (opcional)
+
+`task` es un atajo para no escribir comandos largos. No es obligatorio — cada ejercicio
+incluye el comando completo como alternativa.
+
+Instálalo desde: https://taskfile.dev/installation/
+
+Con `task` instalado, los comandos del curso se simplifican:
+
+| Sin task | Con task |
+|----------|----------|
+| `cd proyecto-integrador/design-lab && uv sync` | `task setup` |
+| `cd proyecto-integrador/design-lab && uv run pytest -v` | `task test:design` |
+
+---
+
+## 8. Software adicional que necesitarás en sesiones futuras
+
+No los instales todos ahora — solo tenlos en cuenta para cuando toque:
+
+| Software | Cuándo se usa | Link |
+|----------|--------------|------|
+| **Git** | Desde S1 (commits y push) | https://git-scm.com |
+| **Docker Desktop** | S5 en adelante | https://www.docker.com/products/docker-desktop/ |
+| **Postman** | S3 | https://www.postman.com/downloads/ |
+| **Node.js** (LTS) | S4 (Karate), S6 (K6) | https://nodejs.org |
+| **Java JDK 17+** | S4 (REST-assured) | https://adoptium.net |
+
+---
+
+## Cómo entregar ejercicios
+
+Al final de cada sesión, haz un commit con tus avances:
+
+```bash
+git add .
+git commit -m "S1: completar matriz trazabilidad REQ-LOG + mini reto pairwise"
+git push
+```
+
+Tu instructor revisará tu repo en GitHub — no necesitas enviar nada por correo.
+
+---
+
+## Troubleshooting
+
+### `uv` no se reconoce como comando
+- **Causa:** la terminal no detecta la ruta de instalación.
+- **Solución:** cierra y vuelve a abrir la terminal. Si persiste, verifica que `~/.local/bin` (Linux/Mac) o `%USERPROFILE%\.local\bin` (Windows) esté en tu PATH.
+
+### `uv sync` falla con error de red
+- **Causa:** sin conexión a internet o firewall bloqueando.
+- **Solución:** verifica tu conexión. Si estás en red corporativa, prueba con VPN desactivada o usa hotspot temporal.
+
+### `uv sync` falla con error de versión de Python
+- **Causa:** el proyecto requiere Python >= 3.12.
+- **Solución:** `uv` descarga la versión correcta automáticamente. Si falla, instala Python 3.12+ manualmente desde https://python.org.
+
+### `pytest` da error "ModuleNotFoundError"
+- **Causa:** estás ejecutando desde la carpeta equivocada.
+- **Solución:** asegúrate de estar en `proyecto-integrador/design-lab/` antes de ejecutar.
+
+### `pytest` dice "no tests collected"
+- **Causa:** el archivo `pyproject.toml` no se está leyendo correctamente.
+- **Solución:** verifica que `pyproject.toml` existe en `design-lab/` y que contiene `testpaths = ["tests"]`.
+
+### Los tests dan FAILED en lugar de PASSED
+- **Causa:** algo se modificó en los archivos del laboratorio.
+- **Solución:** `git checkout -- .` para restaurar los archivos originales del template, y vuelve a ejecutar.
+
+---
+
+## Estructura del curso
+
+El curso tiene 10 sesiones (9 de 3h + 1 de 2h = 29 horas). Cada sesión agrega una etapa
+al proyecto integrador. Lee el plan completo en [PLAN_MAESTRO.md](PLAN_MAESTRO.md).
+
+```
+S1  Diseño de pruebas         ← estás aquí
+S2  POM + Screenplay + DRY
+S3  APIs I: Postman + Newman
+S4  APIs II: Karate DSL + Pact
+S5  CI/CD: GitHub Actions + Jenkins + Docker
+S6  Performance: K6 + JMeter
+S7  Seguridad: OWASP ZAP + Accesibilidad
+S8  Mantenimiento + Mutation Testing
+S9  Móvil + Escritorio + Visual
+S10 Cierre: demo end-to-end
+```
+
+================
+File: Taskfile.yml
+================
+version: "3"
+
+vars:
+  DESIGN_LAB: proyecto-integrador/design-lab
+  UI_LAB: proyecto-integrador/ui-lab
+
+tasks:
+  # ── Sesión 1: Diseño de pruebas ───────────────────────────────────────────
+  setup:
+    desc: "S1 — Instala dependencias del laboratorio de diseño (uv sync)"
+    dir: "{{.DESIGN_LAB}}"
+    cmds:
+      - uv sync
+
+  test:design:
+    desc: "S1 — Suite de técnicas de diseño: EP, BVA, decisión y pairwise"
+    dir: "{{.DESIGN_LAB}}"
+    cmds:
+      - uv run pytest -v
+
+  # ── Sesión 2: POM, Screenplay y Data-Driven ───────────────────────────────
+  setup:ui:
+    desc: "S2 — Instala dependencias del laboratorio de UI y descarga Chromium"
+    dir: "{{.UI_LAB}}"
+    cmds:
+      - uv sync --group dev
+      - uv run playwright install chromium
+
+  test:ui:
+    desc: "S2 — Suite de UI: POM, Screenplay y data-driven sobre SauceDemo"
+    dir: "{{.UI_LAB}}"
+    cmds:
+      - uv run pytest -v
+
+  test:ui:headed:
+    desc: "S2 — Suite de UI con navegador visible (útil para depurar)"
+    dir: "{{.UI_LAB}}"
+    cmds:
+      - uv run pytest --headed -v
+
+
+
+
+
+================================================================
+End of Codebase
+================================================================
