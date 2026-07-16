@@ -1,0 +1,409 @@
+{
+  "info": {
+    "_postman_id": "d54d42b8-21d6-47b3-870a-5127df1d2bb7",
+    "name": "RETO_S3_Randolph",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29413396",
+    "_collection_link": "https://go.postman.co/collection/29413396-d54d42b8-21d6-47b3-870a-5127df1d2bb7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Get Usuarios",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status 200\r",
+              "pm.test('Status es 200 OK', function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//son 10 usuarios\r",
+              "pm.test('Devuelve la lista completa de 10 posts', function () {\r",
+              "    const posts = pm.response.json();\r",
+              "    pm.expect(posts).to.be.an('array');\r",
+              "    pm.expect(posts).to.have.lengthOf(10);\r",
+              "});\r",
+              "\r",
+              "//tiempo < 2000 ms\r",
+              "pm.test('Responde en menos de 2 segundos', function () {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02 - GET Detalle de un usuario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status 200\r",
+              "pm.test('Status es 200 OK', function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//JSON Schema con id, name, username, email obligatorios\r",
+              "// Contrato de la API: si la estructura cambia, este test falla\r",
+              "// 1. Definimos el esquema esperado (el contrato de la API)\r",
+              "const schema = {\r",
+              "    \"type\": \"object\",\r",
+              "    \"required\": [\"id\", \"name\", \"username\", \"email\", \"address\", \"phone\", \"website\", \"company\"],\r",
+              "    \"properties\": {\r",
+              "        \"id\": { \"type\": \"integer\" },\r",
+              "        \"name\": { \"type\": \"string\" },\r",
+              "        \"username\": { \"type\": \"string\" },\r",
+              "        \"email\": { \"type\": \"string\", \"format\": \"email\" }, // Valida que tenga estructura de correo\r",
+              "        \"address\": {\r",
+              "            \"type\": \"object\",\r",
+              "            \"required\": [\"street\", \"suite\", \"city\", \"zipcode\", \"geo\"],\r",
+              "            \"properties\": {\r",
+              "                \"street\": { \"type\": \"string\" },\r",
+              "                \"suite\": { \"type\": \"string\" },\r",
+              "                \"city\": { \"type\": \"string\" },\r",
+              "                \"zipcode\": { \"type\": \"string\" },\r",
+              "                \"geo\": {\r",
+              "                    \"type\": \"object\",\r",
+              "                    \"required\": [\"lat\", \"lng\"],\r",
+              "                    \"properties\": {\r",
+              "                        \"lat\": { \"type\": \"string\" },\r",
+              "                        \"lng\": { \"type\": \"string\" }\r",
+              "                    }\r",
+              "                }\r",
+              "            }\r",
+              "        },\r",
+              "        \"phone\": { \"type\": \"string\" },\r",
+              "        \"website\": { \"type\": \"string\" },\r",
+              "        \"company\": {\r",
+              "            \"type\": \"object\",\r",
+              "            \"required\": [\"name\", \"catchPhrase\", \"bs\"],\r",
+              "            \"properties\": {\r",
+              "                \"name\": { \"type\": \"string\" },\r",
+              "                \"catchPhrase\": { \"type\": \"string\" },\r",
+              "                \"bs\": { \"type\": \"string\" }\r",
+              "            }\r",
+              "        }\r",
+              "    }\r",
+              "};\r",
+              "\r",
+              "// 2. Validamos que el JSON de respuesta cumpla con el esquema definido\r",
+              "pm.test(\"El contrato de la API es válido (JSON Schema)\", function () {\r",
+              "    const responseData = pm.response.json();\r",
+              "    \r",
+              "    // ajv es el validador que Postman trae por defecto en su entorno\r",
+              "    const Ajv = require('ajv');\r",
+              "    const ajv = new Ajv({ allErrors: true }); // 'allErrors' ayuda a reportar todos los fallos juntos\r",
+              "    \r",
+              "    const validate = ajv.compile(schema);\r",
+              "    const valid = validate(responseData);\r",
+              "    \r",
+              "    // Si la validación falla, imprimimos los detalles en la consola de Postman\r",
+              "    if (!valid) {\r",
+              "        console.error(\"Detalles de fallas en el contrato:\", ajv.errorsText(validate.errors));\r",
+              "    }\r",
+              "    \r",
+              "    pm.expect(valid).to.be.true;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03 - POST Crea un usuario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status 201\r",
+              "pm.test('Status es 201 OK', function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "//el name enviado (generado en pre-request con Date.now()) coincide con el devuelto\r",
+              "pm.test(\"El nombre devuelto coincide con el nombre dinámico generado\", function () {\r",
+              "    // 1. Obtenemos el valor actual de la variable de colección\r",
+              "    const nombreEsperado = pm.collectionVariables.get('dynamic_name');\r",
+              "    \r",
+              "    // 2. Obtenemos el valor de la propiedad 'name' en la respuesta del servidor\r",
+              "    const responseData = pm.response.json();\r",
+              "    const nombreRecibido = responseData.name;\r",
+              "    \r",
+              "    // Log útil para la consola de Postman en caso de que queramos verificar\r",
+              "    console.log(`Comparando: Esperado [${nombreEsperado}] vs Recibido [${nombreRecibido}]`);\r",
+              "    \r",
+              "    // 3. Validamos que ambos valores sean exactamente iguales\r",
+              "    pm.expect(nombreRecibido).to.eql(nombreEsperado);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Se ejecuta ANTES de enviar el request: genera un name\r",
+              "const name = 'RNR ' + Date.now();\r",
+              "pm.collectionVariables.set('dynamic_name', name);\r",
+              "console.log('Nombre generado:', name);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{dynamic_name}}\",\r\n    \"username\": \"Bret\",\r\n    \"email\": \"Sincere@april.biz\",\r\n    \"address\": {\r\n        \"street\": \"Kulas Light\",\r\n        \"suite\": \"Apt. 556\",\r\n        \"city\": \"Gwenborough\",\r\n        \"zipcode\": \"92998-3874\",\r\n        \"geo\": {\r\n            \"lat\": \"-37.3159\",\r\n            \"lng\": \"81.1496\"\r\n        }\r\n    },\r\n    \"phone\": \"1-770-736-8031 x56442\",\r\n    \"website\": \"hildegard.org\",\r\n    \"company\": {\r\n        \"name\": \"Romaguera-Crona\",\r\n        \"catchPhrase\": \"Multi-layered client-server neural-net\",\r\n        \"bs\": \"harness real-time e-markets\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04 - PUT Actualiza usuario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status 200\r",
+              "pm.test(\"Status code es 200 OK\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//Valida la actualizacion del campo\r",
+              "pm.test(\"El campo 'email' de la respuesta coincide con el email dinámico\", function () {\r",
+              "    const responseData = pm.response.json();\r",
+              "    \r",
+              "    // 1. Obtenemos el email esperado desde las variables de la colección\r",
+              "    const emailEsperado = pm.collectionVariables.get('updated_email');\r",
+              "    \r",
+              "    // 2. Extraemos el email que nos devolvió el servidor\r",
+              "    const emailRecibido = responseData.email;\r",
+              "    \r",
+              "    console.log(`Comparando Email - Esperado: ${emailEsperado} | Recibido: ${emailRecibido}`);\r",
+              "    \r",
+              "    // 3. Validamos que coincidan perfectamente\r",
+              "    pm.expect(emailRecibido).to.eql(emailEsperado);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "//Genera un e-mail dinamico\r",
+              "const dynamicEmail = 'user1.' + Date.now() + '@testdomain.com';\r",
+              "\r",
+              "// Guardamos el correo en una variable de colección\r",
+              "pm.collectionVariables.set('updated_email', dynamicEmail);\r",
+              "\r",
+              "console.log('Nuevo email para actualizar:', dynamicEmail);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json; charset=UTF-8",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": 1,\r\n  \"name\": \"Leanne Graham\",\r\n  \"username\": \"Bret\",\r\n  \"email\": \"{{updated_email}}\",\r\n  \"address\": {\r\n    \"street\": \"Kulas Light\",\r\n    \"suite\": \"Apt. 556\",\r\n    \"city\": \"Gwenborough\",\r\n    \"zipcode\": \"92998-3874\",\r\n    \"geo\": {\r\n      \"lat\": \"-37.3159\",\r\n      \"lng\": \"81.1496\"\r\n    }\r\n  },\r\n  \"phone\": \"1-770-736-8031 x56442\",\r\n  \"website\": \"hildegard.org\",\r\n  \"company\": {\r\n    \"name\": \"Romaguera-Crona\",\r\n    \"catchPhrase\": \"Multi-layered client-server neural-net\",\r\n    \"bs\": \"harness real-time e-markets\"\r\n  }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "05 - DELETE usuario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "//Status 200\r",
+              "pm.test('Status es 200 OK', function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "//Cuerpo de la respuesta es un objeto vacío\r",
+              "pm.test('El cuerpo de la respuesta es un objeto vacío', function () {\r",
+              "    pm.expect(pm.response.json()).to.eql({});\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "06 - GET Inexistente (negativo)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// 1. Validar que el código de estado sea exactamente 404 (Not Found)\r",
+              "pm.test(\"El código de estado es 404 Not Found\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "// 2. Validar que el tiempo de respuesta sea óptimo (opcional pero recomendado)\r",
+              "pm.test(\"El tiempo de respuesta es menor a 800ms\", function () {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+              "});\r",
+              "\r",
+              "// 3. Validar el contenido del cuerpo de respuesta\r",
+              "pm.test(\"El cuerpo de la respuesta está vacío o devuelve un objeto de error\", function () {\r",
+              "    const responseData = pm.response.json();\r",
+              "    \r",
+              "    // JSONPlaceholder devuelve un objeto vacío {} cuando el ID no existe.\r",
+              "    // Validamos que el objeto devuelto no tenga las propiedades de un usuario válido.\r",
+              "    pm.expect(responseData).to.not.have.property('name');\r",
+              "    pm.expect(responseData).to.not.have.property('email');\r",
+              "    \r",
+              "    // Opcional: Validamos que sea efectivamente un objeto vacío\r",
+              "    pm.expect(Object.keys(responseData).length).to.eql(0);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{dynamic_name}}\",\r\n    \"username\": \"Bret\",\r\n    \"email\": \"Sincere@april.biz\",\r\n    \"address\": {\r\n        \"street\": \"Kulas Light\",\r\n        \"suite\": \"Apt. 556\",\r\n        \"city\": \"Gwenborough\",\r\n        \"zipcode\": \"92998-3874\",\r\n        \"geo\": {\r\n            \"lat\": \"-37.3159\",\r\n            \"lng\": \"81.1496\"\r\n        }\r\n    },\r\n    \"phone\": \"1-770-736-8031 x56442\",\r\n    \"website\": \"hildegard.org\",\r\n    \"company\": {\r\n        \"name\": \"Romaguera-Crona\",\r\n        \"catchPhrase\": \"Multi-layered client-server neural-net\",\r\n        \"bs\": \"harness real-time e-markets\"\r\n    }\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/999999",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "999999"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "dynamic_name",
+      "value": ""
+    },
+    {
+      "key": "updated_email",
+      "value": ""
+    }
+  ]
+}
