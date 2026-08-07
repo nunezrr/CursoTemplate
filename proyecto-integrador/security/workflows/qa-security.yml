@@ -1,0 +1,38 @@
+# Plantilla didáctica — ZAP baseline en GitHub Actions (Sesión 7)
+# En clase se lee; el lab hands-on corre en local con Docker Compose.
+
+name: QA Security Gate (plantilla Sesión 7)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "proyecto-integrador/security/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zap-baseline:
+    name: OWASP ZAP baseline (pasivo)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proyecto-integrador/security
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Juice Shop + ZAP baseline
+        run: |
+          docker compose up -d --wait juiceshop
+          docker compose run --rm zap-baseline
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: proyecto-integrador/security/reports/

@@ -1,0 +1,35 @@
+# Plantilla — Release Gate en CI (Sesión 10)
+
+name: qa-release-gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "proyecto-integrador/release-gate/**"
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proyecto-integrador/release-gate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --group dev
+      - name: Unit tests del juez
+        run: uv run pytest -v
+      - name: Demo release sano
+        run: uv run python run_gate.py metrics/healthy.json
+      - name: Demo release bloqueado (mutation)
+        run: |
+          set +e
+          uv run python run_gate.py metrics/blocked_mutation.json
+          test $? -eq 1

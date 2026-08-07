@@ -1,0 +1,8 @@
+{
+  "pass_rate": 0.97,
+  "p95_ms": 220.0,
+  "zap_fail_new": 0,
+  "mutation_score": 0.96,
+  "a11y_critical": 0,
+  "visual_diff_pixels": 962560
+}

@@ -1,0 +1,43 @@
+services:
+  juiceshop:
+    image: bkimminich/juice-shop:v17.3.0
+    container_name: curso-juiceshop
+    ports:
+      - "3000:3000"
+    healthcheck:
+      # En esta imagen el binario es /nodejs/bin/node (no está en PATH como "node").
+      test:
+        [
+          "CMD",
+          "/nodejs/bin/node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3000/',(r)=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+  # Escaneo baseline (pasivo). Se lanza con: docker compose run --rm zap-baseline
+  zap-baseline:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: curso-zap-baseline
+    volumes:
+      # Todo el workdir del escaneo (HTML/JSON + rules.tsv copiado por el script)
+      - ./reports:/zap/wrk:rw
+    depends_on:
+      juiceshop:
+        condition: service_healthy
+    entrypoint: ["zap-baseline.py"]
+    command:
+      - "-t"
+      - "http://juiceshop:3000"
+      - "-m"
+      - "1"
+      - "-r"
+      - "zap-report.html"
+      - "-J"
+      - "zap-report.json"
+      - "-c"
+      - "rules.tsv"
+      - "-I"

@@ -1,0 +1,13 @@
+# Entornos y cachés
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Artefactos de cosmic-ray (se regeneran en clase)
+session.sqlite
+*.sqlite
+baseline_out.txt
+
+# Reportes generados (mantenemos la carpeta con .gitkeep)
+reports/*.html
+!reports/.gitkeep

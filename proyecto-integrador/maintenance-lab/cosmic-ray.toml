@@ -1,0 +1,35 @@
+# Configuracion de cosmic-ray (mutation testing) - Sesion 8.
+#
+# (Comentarios en ASCII a proposito: en Windows cosmic-ray lee este archivo con
+#  el codec del sistema, no UTF-8, y los acentos lo rompen. ASCII = portable.)
+#
+# Flujo completo:
+#   uv run cosmic-ray init cosmic-ray.toml session.sqlite   -> genera los mutantes
+#   uv run cosmic-ray baseline cosmic-ray.toml              -> verifica que la suite pasa sin mutar
+#   uv run cosmic-ray exec cosmic-ray.toml session.sqlite   -> corre la suite contra cada mutante
+#   uv run cr-report session.sqlite                         -> resumen en terminal
+#   uv run cr-html session.sqlite > reports/mutation.html   -> reporte navegable
+#
+# Nota 2026: el temario original menciona mutmut, pero mutmut 3.x requiere
+# `fork` (solo Linux/macOS/WSL). cosmic-ray esta mantenido, soporta Windows
+# de forma nativa y genera reporte HTML - por eso es nuestra herramienta.
+
+[cosmic-ray]
+# El archivo que vamos a mutar (la regla de negocio de la Sesion 1):
+module-path = "maintenance_lab/discount.py"
+
+# Tiempo maximo por mutante: si la suite tarda mas, se marca como "timeout"
+# (tipico cuando el mutante crea un bucle infinito).
+timeout = 30.0
+
+excluded-modules = []
+
+# El comando que decide si un mutante MUERE (suite falla) o SOBREVIVE (suite pasa).
+# -x: detenerse en el primer fallo (mas rapido matar mutantes).
+# Usamos `uv run` a proposito: cosmic-ray lanza el comando por subprocess y en
+# Windows un `python` pelado se resuelve al Python del sistema (sin pytest).
+# `uv run` garantiza el interprete del venv en los tres sistemas operativos.
+test-command = "uv run python -m pytest -x -q tests"
+
+[cosmic-ray.distributor]
+name = "local"

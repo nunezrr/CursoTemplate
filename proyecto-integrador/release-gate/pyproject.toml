@@ -1,0 +1,14 @@
+[project]
+name = "release-gate"
+version = "1.0.0"
+description = "Sesión 10 — Puerta de Calidad de Release (juez único de métricas)"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8.2.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --tb=short"

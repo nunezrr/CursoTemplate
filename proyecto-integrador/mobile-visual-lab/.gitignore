@@ -1,0 +1,15 @@
+# Entornos y cachés
+.venv/
+__pycache__/
+.pytest_cache/
+test-results/
+playwright-report/
+blob-report/
+
+# Diffs generados al fallar visual (se regeneran en clase)
+tests/**/*-actual.png
+tests/**/*-diff.png
+
+# Reportes locales
+reports/*
+!reports/.gitkeep

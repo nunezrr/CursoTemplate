@@ -1,0 +1,7 @@
+reports/*
+!reports/.gitkeep
+a11y/.venv/
+a11y/.pytest_cache/
+a11y/**/__pycache__/
+*.pyc
+NUL

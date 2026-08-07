@@ -1,0 +1,19 @@
+[project]
+name = "mobile-visual-lab"
+version = "0.1.0"
+description = "Sesión 9 — emulación móvil + regresión visual con Playwright (Etapa 9)"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2.0",
+    "playwright>=1.49.0",
+    "pytest-playwright>=0.5.0",
+    "pillow>=10.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --tb=short"

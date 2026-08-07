@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Tienda — Login (v2)</title>
+</head>
+<body>
+  <!-- VERSIÓN 2: el "después" de un rediseño típico. -->
+  <!-- El equipo de front migró a otro sistema de diseño: -->
+  <!--   * desapareció id="login-btn" -->
+  <!--   * la clase "btn-primary" ahora es "c-button c-button--cta" (generada) -->
+  <!-- PERO para el usuario NADA cambió: sigue siendo un botón que dice "Ingresar". -->
+  <main>
+    <h1>Ingresar</h1>
+    <form>
+      <label for="user">Usuario</label>
+      <input id="user" name="user" type="text">
+
+      <label for="pass">Contraseña</label>
+      <input id="pass" name="pass" type="password">
+
+      <button class="c-button c-button--cta" data-qa="submit" type="button">Ingresar</button>
+    </form>
+  </main>
+</body>
+</html>

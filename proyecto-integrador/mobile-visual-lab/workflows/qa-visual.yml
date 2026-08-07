@@ -1,0 +1,57 @@
+# Etapa 9 — gate visual (plantilla educativa Sesión 9)
+# Copiala a .github/workflows/ para activarla.
+
+name: qa-visual
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proyecto-integrador/mobile-visual-lab
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Dependencias + Chromium
+        run: |
+          uv sync --group dev
+          uv run playwright install chromium --with-deps
+
+      - name: Smoke móvil + regresión visual
+        run: uv run pytest tests -v
+
+      - name: Gate visual (UI rota debe fallar)
+        run: |
+          set +e
+          uv run pytest gate -v
+          code=$?
+          if [ "$code" -eq 1 ]; then
+            echo "Gate visual bloqueó correctamente (exit 1)."
+            exit 0
+          fi
+          echo "Se esperaba exit 1 del gate visual; obtuvo $code"
+          exit 1
+
+      - name: Subir capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-reports
+          path: proyecto-integrador/mobile-visual-lab/reports/

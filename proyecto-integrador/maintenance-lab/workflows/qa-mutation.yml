@@ -1,0 +1,52 @@
+# Etapa 8 del gate — Calidad del conjunto de pruebas (mutation testing).
+#
+# Plantilla educativa (Sesión 8). Muestra cómo el mutation score se vuelve un
+# threshold del pipeline, igual que los umbrales de K6 (S6) y las reglas de ZAP
+# (S7): una métrica se mide, un umbral decide.
+#
+# Copiala a .github/workflows/ para activarla.
+
+name: qa-mutation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mutation:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: proyecto-integrador/maintenance-lab
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sincronizar dependencias
+        run: uv sync --group dev
+
+      # Mismo runner que en local (idempotente, sin redirects frágiles).
+      # --enforce-gate: exit 1 si survival > 10% (score < 90%).
+      # Con la suite débil de clase el job FALLA — ese es el punto pedagógico.
+      # Cuando el equipo suba el score (>= 90%), el job pasa.
+      - name: Mutation testing + gate (>= 90%)
+        run: python scripts/run_mutation.py --enforce-gate
+
+      - name: Subir reporte
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: proyecto-integrador/maintenance-lab/reports/mutation.html
