@@ -1,0 +1,16 @@
+[project]
+name = "reto-practico-release-gate"
+version = "0.1.0"
+description = "Reto práctico Certificación 3 — QA Release Gate"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --tb=short"
