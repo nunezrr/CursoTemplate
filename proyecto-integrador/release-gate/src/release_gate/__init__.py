@@ -76,17 +76,35 @@ def evaluate(metrics: dict) -> dict:
     }
 
 
+REQUIRED_KEYS = {
+    "pass_rate",
+    "p95_ms",
+    "zap_fail_new",
+    "mutation_score",
+    "a11y_critical",
+    "visual_diff_pixels",
+}
+
+
 def load_metrics(path: Path) -> dict:
-    data = json.loads(path.read_text(encoding="utf-8"))
-    required = {
-        "pass_rate",
-        "p95_ms",
-        "zap_fail_new",
-        "mutation_score",
-        "a11y_critical",
-        "visual_diff_pixels",
-    }
-    missing = required - set(data)
+    """Lee y valida el contrato de entrada. Errores claros para la demo en clase."""
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise SystemExit(f"No se pudo leer {path}: {exc}") from exc
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        # ASCII: consolas Windows cp1252 corrompen acentos.
+        raise SystemExit(
+            f"JSON invalido en {path.name}: {exc.msg} (linea {exc.lineno}, col {exc.colno})"
+        ) from exc
+
+    if not isinstance(data, dict):
+        raise SystemExit(f"JSON invalido en {path.name}: se esperaba un objeto {{...}}")
+
+    missing = REQUIRED_KEYS - set(data)
     if missing:
         raise SystemExit(f"JSON incompleto; faltan: {sorted(missing)}")
     return data
@@ -107,11 +125,12 @@ def main(argv: list[str] | None = None) -> int:
     result = evaluate(metrics)
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
+    # Mensajes en ASCII: las consolas Windows cp1252 corrompen acentos/em-dash.
     if result["passed"]:
         print("\nRELEASE: PASA", file=sys.stderr)
         return 0
     print(
-        f"\nRELEASE: BLOQUEADO — falló: {', '.join(result['failed'])}",
+        f"\nRELEASE: BLOQUEADO - fallo: {', '.join(result['failed'])}",
         file=sys.stderr,
     )
     return 1

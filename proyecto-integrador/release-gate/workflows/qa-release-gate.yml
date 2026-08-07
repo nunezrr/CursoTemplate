@@ -33,3 +33,5 @@ jobs:
           set +e
           uv run python run_gate.py metrics/blocked_mutation.json
           test $? -eq 1
+      - name: Arco completo de escenarios
+        run: uv run python scripts/run_all_demos.py

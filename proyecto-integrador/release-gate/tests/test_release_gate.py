@@ -1,5 +1,6 @@
 """Tests del release gate (Sesión 10)."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ from release_gate import (
     THRESHOLDS,
     a11y_critical_ok,
     evaluate,
+    load_metrics,
     mutation_score,
     p95_ok,
     pass_rate,
@@ -17,6 +19,7 @@ from release_gate import (
 
 ROOT = Path(__file__).resolve().parents[1]
 METRICS = ROOT / "metrics"
+DEMOS = ROOT / "demos"
 
 HEALTHY = {
     "pass_rate": 0.97,
@@ -90,7 +93,53 @@ def test_evaluate_bloquea_varios():
     }
 
 
-def test_json_fixtures_existen():
-    assert (METRICS / "healthy.json").exists()
-    assert (METRICS / "blocked_mutation.json").exists()
-    assert (METRICS / "blocked_visual.json").exists()
+# Cada JSON de metrics/ debe producir exactamente este resultado en clase.
+ESCENARIOS_JSON = [
+    ("healthy.json", []),
+    ("blocked_pass_rate.json", ["pass_rate"]),
+    ("blocked_p95.json", ["p95"]),
+    ("blocked_zap.json", ["zap"]),
+    ("blocked_a11y.json", ["a11y"]),
+    ("blocked_mutation.json", ["mutation"]),
+    ("blocked_visual.json", ["visual"]),
+    (
+        "blocked_many.json",
+        ["pass_rate", "p95", "zap", "mutation", "a11y", "visual"],
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "json_name,expected_failed",
+    ESCENARIOS_JSON,
+    ids=[name for name, _ in ESCENARIOS_JSON],
+)
+def test_escenarios_metrics_json(json_name, expected_failed):
+    """Los JSON de demo se evalúan igual que en la clase (exit 0/1)."""
+    path = METRICS / json_name
+    assert path.exists(), f"Falta {path}"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    result = evaluate(data)
+    assert set(result["failed"]) == set(expected_failed)
+    assert result["passed"] is (len(expected_failed) == 0)
+
+
+def test_load_metrics_incomplete_corta():
+    """demos/incomplete.json: faltan claves → SystemExit (no evalua)."""
+    path = DEMOS / "incomplete.json"
+    assert path.exists(), f"Falta {path}"
+    with pytest.raises(SystemExit, match="JSON incompleto"):
+        load_metrics(path)
+
+
+def test_load_metrics_invalid_corta():
+    """demos/invalid.json: trailing comma → SystemExit (JSON invalido)."""
+    path = DEMOS / "invalid.json"
+    assert path.exists(), f"Falta {path}"
+    with pytest.raises(SystemExit, match="JSON invalido"):
+        load_metrics(path)
+
+
+def test_load_metrics_healthy_ok():
+    data = load_metrics(METRICS / "healthy.json")
+    assert data["pass_rate"] == pytest.approx(0.97)
