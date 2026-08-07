@@ -79,6 +79,8 @@ Salida esperada (release de ejemplo con mutation score roto: 40/50 = 0.80 < 0.90
 - [ ] `uv run python -m src.release_gate` → JSON con `"passed": false` y solo `mutation` en `false`
 - [ ] Explicá en una frase por qué ese release se bloquea
 
+El release se bloquea porque el porcentaje de mutantes eliminados (mutation score) es del 80% ($40/50 = 0.80$), el cual no alcanza el umbral mínimo requerido del 90% ($0.90$).
+
 ## Reglas
 
 - No modifiques `tests/test_release_gate.py` ni `THRESHOLDS`.

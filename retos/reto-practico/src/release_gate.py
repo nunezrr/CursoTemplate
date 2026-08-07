@@ -20,15 +20,21 @@ THRESHOLDS = {
     "a11y_critical": 0,      # falla si critical >
 }
 
-
 def pass_rate(passed: int, total: int) -> float:
     """Tests que pasaron / tests ejecutados (API/UI).
 
     Caso borde: si total es 0, devolvé 1.0 (nada que fallar).
     Ejemplo: pass_rate(95, 100) -> 0.95
-    """
-    # TODO: implementar
-    raise NotImplementedError
+    
+    Calcula la tasa de tests exitosos.
+
+    Si total es 0, se considera 1.0 (100% exito en suite vacia).
+    Retorna 0.0 si los datos son incoherentes (passed < 0 o passed > total)."""
+    if total == 0:
+        return 1.0
+    if total < 0 or passed < 0 or passed > total:
+        return 0.0
+    return float(passed / total)
 
 
 def p95_ok(p95_ms: float, threshold_ms: float | None = None) -> bool:
@@ -36,9 +42,11 @@ def p95_ok(p95_ms: float, threshold_ms: float | None = None) -> bool:
 
     Pasa si p95_ms <= threshold. Por defecto usá THRESHOLDS["p95_ms"].
     Ejemplo: p95_ok(180, 500) -> True; p95_ok(800, 500) -> False
-    """
-    # TODO: implementar
-    raise NotImplementedError
+
+    Valida si la latencia p95 (K6) esta dentro del limite tolerado."""
+    if threshold_ms is None:
+        threshold_ms = THRESHOLDS["p95_ms"]
+    return p95_ms <= threshold_ms
 
 
 def zap_gate(fail_new: int, warn_new: int = 0, fail_limit: int | None = None) -> bool:
@@ -47,9 +55,13 @@ def zap_gate(fail_new: int, warn_new: int = 0, fail_limit: int | None = None) ->
     Pasa si fail_new <= fail_limit. Por defecto fail_limit = THRESHOLDS["zap_fail_new"] (0).
     warn_new se ignora a propósito (no tumba el job).
     Ejemplo: zap_gate(0, 7) -> True; zap_gate(1, 0) -> False
-    """
-    # TODO: implementar
-    raise NotImplementedError
+    
+    Valida vulnerabilidades de seguridad ZAP.
+    Solo las alertas FAIL-NEW pueden bloquear. WARN-NEW se reportan pero no bloquean."""
+
+    if fail_limit is None:
+        fail_limit = THRESHOLDS["zap_fail_new"]
+    return fail_new <= fail_limit
 
 
 def mutation_score(killed: int, total_mutants: int) -> float:
@@ -57,9 +69,16 @@ def mutation_score(killed: int, total_mutants: int) -> float:
 
     Caso borde: si total_mutants es 0, devolvé 1.0.
     Ejemplo: mutation_score(45, 50) -> 0.90
-    """
-    # TODO: implementar
-    raise NotImplementedError
+
+    Calcula la efectividad de la suite midiendo mutantes asesinados.
+
+    Si total_mutants es 0, se considera 1.0 (100% de exito sin mutantes).
+    Retorna 0.0 si los datos son incoherentes (total_mutants < 0, killed < 0 o killed > total_mutants)."""
+    if total_mutants == 0:
+        return 1.0
+    if total_mutants < 0 or killed < 0 or killed > total_mutants:
+        return 0.0
+    return float(killed / total_mutants)
 
 
 def a11y_critical_ok(critical_violations: int) -> bool:
@@ -67,10 +86,8 @@ def a11y_critical_ok(critical_violations: int) -> bool:
 
     Pasa si critical_violations <= THRESHOLDS["a11y_critical"] (0).
     Ejemplo: a11y_critical_ok(0) -> True; a11y_critical_ok(1) -> False
-    """
-    # TODO: implementar
-    raise NotImplementedError
-
+    Valida si hay cero violaciones de accesibilidad con severidad 'critical'."""
+    return critical_violations <= THRESHOLDS["a11y_critical"]
 
 def release_gate(metrics: dict) -> dict:
     """Evalúa el release contra THRESHOLDS y decide.
@@ -87,9 +104,36 @@ def release_gate(metrics: dict) -> dict:
     - a11y: True si a11y_critical_ok(metrics["a11y_critical"])
     - Valor exactamente en el umbral PASA (falla solo si lo cruza).
     - passed es True solo si TODOS los checks son True.
-    """
-    # TODO: implementar
-    raise NotImplementedError
+    
+    Evalua todas las metricas contra los umbrales y emite el veredicto final."""
+    pr = metrics.get("pass_rate")
+    if pr is None:
+        pr = pass_rate(metrics.get("passed_tests", 0), metrics.get("total_tests", 0))
+
+    ms = metrics.get("mutation_score")
+    if ms is None:
+        killed = metrics.get("killed", metrics.get("killed_mutants", 0))
+        total_m = metrics.get("total_mutants", metrics.get("mutants", 0))
+        ms = mutation_score(killed, total_m)
+
+    # Evaluar cada check individualmente usando las funciones correspondientes
+    checks = {
+        "pass_rate": pr >= THRESHOLDS["pass_rate"],
+        "p95": p95_ok(metrics.get("p95_ms", float("inf"))),
+        "zap": zap_gate(
+            metrics.get("zap_fail_new", 0), metrics.get("zap_warn_new", 0)
+        ),
+        "mutation": ms >= THRESHOLDS["mutation_score"],
+        "a11y": a11y_critical_ok(metrics.get("a11y_critical", 0)),
+    }
+
+    # El release pasa solo si TODOS los checks son True
+    all_passed = all(checks.values())
+
+    return {
+        "checks": checks,
+        "passed": all_passed,
+    }
 
 
 if __name__ == "__main__":
